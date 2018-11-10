@@ -2,12 +2,12 @@
 //
 // This file is part of sortbench.
 //
-// Foobar is free software: you can redistribute it and/or modify
+// Sortbench is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Foobar is distributed in the hope that it will be useful,
+// Sortbench is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -25,11 +25,14 @@
 #include "algo.h"
 #include "merge_sort.h"
 
+// printUsage
+//
+// Present the user with the usage instructions
 void printUsage()
 {
-  printf("merge_sort\n" );
+  printf("sortbench\n" );
   printf("Usage:\n" );
-  printf("\tmerge_sort <array_size> <array_total> <thread_total>\n");
+  printf("\tsortbench <array_size> <array_total> <thread_total>\n");
 }
 
 // printArray
@@ -68,7 +71,7 @@ hedger::S_T * createUniqueDataSet(size_t size)
 
   size_t index = 0;
   hedger::S_T value = 0;
-  // Generate array of scrambled unsorted data in the array
+  // Generate array of scrambled unsorted but unique data in the array
   while(index < size) {
     // Get random number; if used, go fish again...
     do {
@@ -108,12 +111,15 @@ int main(int argc, const char **argv)
   sscanf(argv[2], "%d", &array_tot);
   sscanf(argv[3], "%d", &thread_tot);
 
+  // Validate params
   if (!array_size || !array_tot || !thread_tot) {
     printUsage();
     return -1;
   }
 
+  // Create the unique unsorted data set
   hedger::S_T *array = createUniqueDataSet( array_size );
+
   if (array) {
     printf( "BEFORE:\n" );
     printArray(array, array_size);
@@ -128,6 +134,7 @@ int main(int argc, const char **argv)
     result = -1;
   }
 
+  // Clean up
   if (nullptr != array) {
     delete array;
     array = nullptr;
