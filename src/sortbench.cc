@@ -24,6 +24,7 @@
 #include <map>
 #include "algo.h"
 #include "merge_sort.h"
+#include "quick_sort.h"
 
 // printUsage
 //
@@ -85,17 +86,31 @@ hedger::S_T * createUniqueDataSet(size_t size)
   return array;
 }
 
+// test
+//
+// Run the test on the Algo-derived search algorithm object
+//
+// Entry: pointer to algorithm object
+//        pointer to array
+//        size of array
 int test(hedger::Algo *o, hedger::S_T *arr, size_t size)
 {
   int result = o->test(arr, size);
   return result;
 }
 
+// TEMP; REMOVE
+int cmp(const void *a, const void *b)
+{
+  return 0;
+}
+
 int main(int argc, const char **argv)
 {
   int result = 0;
 
-  hedger::MergeSort *sorter = new hedger::MergeSort();
+  hedger::MergeSort *mergeSort = new hedger::MergeSort();
+  hedger::QuickSort *quickSort = new hedger::QuickSort();
 
   // Gather user parameters: array_size, array_tot, thread_tot
   if (argc < 4) {
@@ -124,7 +139,8 @@ int main(int argc, const char **argv)
     printf( "BEFORE:\n" );
     printArray(array, array_size);
 
-    test( sorter, array, array_size );
+    //test( mergeSort, array, array_size );
+    test( quickSort, array, array_size );
 
     printf( "AFTER:\n" );
     printArray(array, array_size);
@@ -140,10 +156,16 @@ int main(int argc, const char **argv)
     array = nullptr;
   }
 
-  if (nullptr != sorter) {
-    delete sorter;
-    sorter = nullptr;
+  if (nullptr != mergeSort) {
+    delete mergeSort;
+    mergeSort = nullptr;
   }
+
+  if (nullptr != quickSort) {
+    delete quickSort;
+    quickSort = nullptr;
+  }
+
 
   return result;
 }

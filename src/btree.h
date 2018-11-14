@@ -1,6 +1,6 @@
-// merge_sort.h
+// btree.h
 //
-// Merge sort implementation class header.
+// Implements an unbalanced binary tree.
 //
 // This file is part of sortbench.
 //
@@ -20,22 +20,33 @@
 // Copyright (C) 2018 Gregory Hedger
 //
 
-#ifndef MERGE_SORT_H_
-#define MERGE_SORT_H_
+#ifndef BTREE_H_
+#define BTREE_H_
 
 #include "algo.h"
 
 namespace hedger
 {
-class MergeSort : public Algo
+struct Node
+{
+  Node *      l;        // left leg
+  Node *      r;        // right leg
+  Node *      p;        // parent (could be axed)
+  hedger::S_T key;      // key
+  void *      data;     // payload / "satellite" data
+};
+
+
+class BTree
 {
   public:
-    MergeSort();
-    virtual ~MergeSort();
-    int test(int *arr, std::size_t size);
-    void merge(int *arr, int start, int mid, int end);
-    void sort(int *arr, int start, int end);
-};
-}
+  BTree();
+  virtual ~BTree();
 
-#endif // MERGE_SORT_H_
+  bool add(hedger::S_T key);
+  bool remove(hedger::S_T key);
+  void *find(hedger::S_T key);
+};
+} // namespace hedger
+#endif // #ifndef BTREE_H_
+
