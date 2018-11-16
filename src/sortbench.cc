@@ -25,6 +25,8 @@
 #include "algo.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
+#include "btree.h"
+#include "scapegoat_tree.h"
 
 // printUsage
 //
@@ -105,10 +107,31 @@ int cmp(const void *a, const void *b)
   return 0;
 }
 
+void testBtree()
+{
+  hedger::ScapegoatTree btree;
+
+  btree.add(17);
+  btree.add(2);
+  btree.add(27);
+  btree.add(3);
+  btree.add(9);
+  btree.add(6);
+  btree.add(5);
+  btree.add(7);
+  btree.add(24);
+
+  btree.print();
+
+}
+
 int main(int argc, const char **argv)
 {
   int result = 0;
 
+  testBtree();
+
+#if 0
   hedger::MergeSort *mergeSort = new hedger::MergeSort();
   hedger::QuickSort *quickSort = new hedger::QuickSort();
 
@@ -165,7 +188,7 @@ int main(int argc, const char **argv)
     delete quickSort;
     quickSort = nullptr;
   }
-
+#endif
 
   return result;
 }

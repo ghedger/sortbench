@@ -48,7 +48,7 @@ int QuickSort::test(int *array, std::size_t size)
 
 int QuickSort::findPartition(hedger::S_T *arr, int start, int end)
 {
-	int pivotMag = arr[end];
+  int pivotMag = arr[end];
   int partition=start;
   int i, t;
   for (i = start; i < end; i++) {
@@ -68,11 +68,11 @@ int QuickSort::findPartition(hedger::S_T *arr, int start, int end)
 
 void QuickSort::sort(hedger::S_T *arr, int start, int end)
 {
-	if (start < end) {
-		int partition = findPartition(arr, start, end);
+  if (start < end) {
+    int partition = findPartition(arr, start, end);
     sort(arr, start, partition - 1);
     sort(arr, partition + 1, end);
-	}
+  }
 }
 
 } // namespace hedger

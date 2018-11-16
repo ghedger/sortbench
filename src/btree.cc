@@ -21,22 +21,67 @@
 //
 
 #include "btree.h"
+#include "stdio.h"
 
 namespace hedger
 {
 
+// Constructor
 BTree::BTree()
 {
+  root_ = nullptr;
+  size_ = 0;
+  maxSize_ = 0;
+  q_ = 0;
 }
 
 BTree::~BTree()
 {
+  // TODO: Delete all nodes
 }
 
-bool BTree::add(hedger::S_T key)
+Node *BTree::add(hedger::S_T key, int *depth)
 {
-  bool result = false;
-  return result;
+  hedger::Node *node = new hedger::Node(key);
+
+  // Is this the first node in the tree?
+  if (nullptr == root_) {
+    root_ = node;
+    q_++;
+    return node;
+  }
+
+  // Find and set appropriate parent
+  Node *currentNode = root_;
+  Node *candidateParent = nullptr;
+  int currentDepth = 0;
+  while (currentNode != nullptr) {
+    candidateParent = currentNode;
+    if (node->key < currentNode->key) {
+      currentNode = currentNode->left;
+      currentDepth++;
+    } else {
+      currentNode = currentNode->right;
+      currentDepth++;
+    }
+  }
+  currentDepth++;
+  if(depth) {
+    *depth = currentDepth;
+  }
+
+  node->parent = candidateParent;
+  if (node->key < node->parent->key) {
+    node->parent->left = node;
+  } else {
+    node->parent->right = node;
+  }
+  node->left = nullptr;
+  node->right = nullptr;
+  changeSize(1);
+
+  q_++;
+  return node;
 }
 
 bool BTree::remove(hedger::S_T key)
@@ -45,16 +90,61 @@ bool BTree::remove(hedger::S_T key)
   return result;
 }
 
-
 void *BTree::find(hedger::S_T key)
 {
-  Node *node = nullptr;
+  hedger::Node *node = findRecurse(key, root_);
+
   return node;
 }
 
+//
+// Helper functions
+//
 
+void BTree::changeSize(int delta)
+{
+  if(size_ + delta > 0 ) {
+    size_ += delta;
+  }
+}
 
+// print
+//
+// Spit out textual representation of tree
+//
+// Entry: -
+// Exit:  -
+void BTree::print(hedger::Node *node)
+{
+  if (!node) {
+    node = root_;
+    if (!node) {
+      return;
+    }
+  }
+  printf("%08x:%d (p:%08x l:%08x r:%08x)\n", node, node->key, node->parent, node->left, node->right);
+  if (node->left) {
+    print(node->left);
+  }
+  if (node->right) {
+    print(node->right);
+  }
+}
 
-
-
+hedger::Node *BTree::findRecurse(hedger::S_T key, hedger::Node *node)
+{
+  if (node) {
+    if (node->key == key) {
+      return node;
+    }
+    if (node->key > key) {
+      return findRecurse(key, node->left);
+    } else if(node->key < key) {
+      return findRecurse(key, node->right);
+    } else {
+      // TODO: Equal case - duplicate keys disallowed
+    }
+  }
+  return nullptr;
+}
 } // namespace hedger

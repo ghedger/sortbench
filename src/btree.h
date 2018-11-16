@@ -29,23 +29,41 @@ namespace hedger
 {
 struct Node
 {
-  Node *      l;        // left leg
-  Node *      r;        // right leg
-  Node *      p;        // parent (could be axed)
-  hedger::S_T key;      // key
-  void *      data;     // payload / "satellite" data
+  Node(hedger::S_T newKey) {
+    key = newKey;
+    left = right = parent = nullptr;
+    data = nullptr;
+  }
+  ~Node() {};
+
+  hedger::Node *      left;     // left leg
+  hedger::Node *      right;    // right leg
+  hedger::Node *      parent;   // parent (could be axed)
+  hedger::S_T         key;      // key
+  void *              data;     // payload / "satellite" data
 };
 
 
 class BTree
 {
   public:
-  BTree();
-  virtual ~BTree();
+    BTree();
+    virtual ~BTree();
 
-  bool add(hedger::S_T key);
-  bool remove(hedger::S_T key);
-  void *find(hedger::S_T key);
+    Node *add(hedger::S_T key, int *depth = NULL);
+    bool remove(hedger::S_T key);
+    void *find(hedger::S_T key);
+    void print(hedger::Node *node = nullptr);
+
+  protected:
+    void changeSize(int);
+    Node *findRecurse(hedger::S_T key, hedger::Node *node);
+
+    Node *  root_;
+    Node *  size_;
+    Node *  maxSize_;
+
+    int q_;
 };
 } // namespace hedger
 #endif // #ifndef BTREE_H_
