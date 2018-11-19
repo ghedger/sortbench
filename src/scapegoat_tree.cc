@@ -46,7 +46,7 @@ ScapegoatTree::~ScapegoatTree()
 int const ScapegoatTree::log32(int q)
 {
   double const log23 = 2.4663034623764317;
-  return (int)ceil(log23 * log(q));
+  return (int) ceil(log23 * log(q));
 }
 
 // add
@@ -61,13 +61,16 @@ hedger::Node *ScapegoatTree::add(hedger::S_T key)
   hedger::Node *node = BTree::add(key, &depth);
 
   // Is it time to rebalance?
-  if (depth > log32(q_)) {
+  int q = log32(q_);
+  if (depth > q) {
     // Walk up tree starting at our node.
     hedger::Node *walk = node->parent;
-    while (3 * sizeOfSubtree(walk) <= 2 * sizeOfSubtree(walk->parent)) {
-      walk = walk->parent;
+    if (walk) {
+      while (3 * sizeOfSubtree(walk) <= 2 * sizeOfSubtree(walk->parent)) {
+        walk = walk->parent;
+      }
+      rebalance(walk->parent);
     }
-    rebalance(walk->parent);
   }
 
   return node;

@@ -48,6 +48,7 @@ Node *BTree::add(hedger::S_T key, int *depth)
   if (nullptr == root_) {
     root_ = node;
     q_++;
+    *depth = 1;
     return node;
   }
 
