@@ -70,6 +70,7 @@ install: all
 clean:
 		@$(RM) -rf $(BUILDDIR)
 		@$(RM) -rf $(TARGETDIR)
+		mkdir -p $(TARGETDIR)
 
 #Full Clean, Objects and Binaries
 cleaner: clean
