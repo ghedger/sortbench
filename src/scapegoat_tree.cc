@@ -69,7 +69,9 @@ hedger::Node *ScapegoatTree::add(hedger::S_T key)
       while (3 * sizeOfSubtree(walk) <= 2 * sizeOfSubtree(walk->parent)) {
         walk = walk->parent;
       }
-      rebalance(walk->parent);
+      if (walk->parent) {
+        rebalance(walk->parent);
+      }
     }
   }
 
@@ -100,7 +102,6 @@ int ScapegoatTree::sizeOfSubtree(hedger::Node *node)
     return 0;
   }
   return sizeOfSubtree(node->left) + sizeOfSubtree(node->right) + 1;
-
 }
 
 // packIntoArray
@@ -160,12 +161,12 @@ hedger::Node *ScapegoatTree::buildBalanced(hedger::Node **rebuildArray, int i, i
 
   int m = nodeTot / 2;
   rebuildArray[i + m]->left = buildBalanced(rebuildArray, i, m);
-  if (!rebuildArray[i + m]->left) {
+  if (rebuildArray[i + m]->left != nullptr) {
     rebuildArray[i + m]->left->parent = rebuildArray[i + m];
   }
   rebuildArray[i + m]->right = buildBalanced(rebuildArray, i + m + 1, nodeTot - m - 1);
 
-  if (rebuildArray[i + m]->right != NULL) {
+  if (rebuildArray[i + m]->right != nullptr) {
     rebuildArray[i + m]->right->parent = rebuildArray[i + m];
   }
 
