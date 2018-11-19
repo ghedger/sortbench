@@ -4,3 +4,4 @@ bin/**
 *.o
 *.swp
 *.swo
+*.orig
