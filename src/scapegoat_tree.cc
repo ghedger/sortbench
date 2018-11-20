@@ -53,7 +53,8 @@ int const ScapegoatTree::log32(int q)
 //
 // Add a node to the tree structure.
 //
-// Entry:  key of new node
+// Entry: key of new node
+// Exit:  pointer to new node
 hedger::Node *ScapegoatTree::add(hedger::S_T key)
 {
   // Use BTree's regular unbalanced insertion
@@ -78,24 +79,12 @@ hedger::Node *ScapegoatTree::add(hedger::S_T key)
   return node;
 }
 
-// findScapegoat
+// sizeOfSubtree
 //
-// Find a node that meets the log-base-alpha requirement for
-// a rebalance root.
+// Returns the number of nodes underneath a given parent node.
 //
-// Entry:  Start node from which we'll walk up.
-// Exit: -
-hedger::Node *ScapegoatTree::findScapegoat(hedger::Node *node)
-{
-  if (node == root_) {
-    return nullptr;
-  }
-}
-
-bool ScapegoatTree::isBalancedAtNode(hedger::Node *node)
-{
-}
-
+// Entry: pointer to parent node
+// Exit:  node total
 int ScapegoatTree::sizeOfSubtree(hedger::Node *node)
 {
   if (!node) {
@@ -127,9 +116,9 @@ int ScapegoatTree::packIntoArray(hedger::Node *node, hedger::Node *rebuildArray[
 //
 // Flatten the tree and rebuild it from the designated root node.
 //
-// Entry:  root node of subtree to rebuild
+// Entry: root node of subtree to rebuild
 // Exit:
-hedger::Node *ScapegoatTree::rebalance(hedger::Node *node)
+void ScapegoatTree::rebalance(hedger::Node *node)
 {
   // Allocate temporary array for new flattened tree.
   // This array holds pointers to nodes.
@@ -138,6 +127,7 @@ hedger::Node *ScapegoatTree::rebalance(hedger::Node *node)
   hedger::Node **rebuildArray = new hedger::Node* [nodeTot];
   packIntoArray(node, rebuildArray, 0);
 
+  // Recursively rebuild of array from flattened tree
   if (!parent) {
     hedger::Node *root = buildBalanced(rebuildArray, 0, nodeTot);
     root->parent = nullptr;
@@ -152,7 +142,12 @@ hedger::Node *ScapegoatTree::rebalance(hedger::Node *node)
 
 // buildBalanced
 //
+// rebalance the tree from a flat array
 //
+// Entry: pointer to array of node pointers
+//        start index in array
+//        total number of nodes in the array
+// Exit:  Node at midpoint of array
 hedger::Node *ScapegoatTree::buildBalanced(hedger::Node **rebuildArray, int i, int nodeTot)
 {
   if (!nodeTot) {
@@ -172,51 +167,4 @@ hedger::Node *ScapegoatTree::buildBalanced(hedger::Node **rebuildArray, int i, i
 
   return rebuildArray[i + m];
 }
-
-#if 0
-def findScapegoat(self, node):
-        if node == self.root:
-            return None
-        while self.isBalancedAtNode(node) == True:
-            if node == self.root:
-                return None
-            node = node.parent
-        return node
-
-    def isBalancedAtNode(self, node):
-        if abs(self.sizeOfSubtree(node.left) - self.sizeOfSubtree(node.right)) <= 1:
-            return True
-        return False
-
-    def sizeOfSubtree(self, node):
-        if node == None:
-            return 0
-        return 1 + self.sizeOfSubtree(node.left) + self.sizeOfSubtree(node.right)
-
-    def rebalance(self, root):
-        def flatten(node, nodes):
-            if node == None:
-                return
-            flatten(node.left, nodes)
-            nodes.append(node)
-            flatten(node.right, nodes)
-
-        def buildTreeFromSortedList(nodes, start, end):
-            if start > end:
-                return None
-            mid = int(math.ceil(start + (end - start) / 2.0))
-            node = Node(nodes[mid].key)
-            node.left = buildTreeFromSortedList(nodes, start, mid-1)
-            node.right = buildTreeFromSortedList(nodes, mid+1, end)
-            return node
-
-        nodes = []
-        flatten(root, nodes)
-        return buildTreeFromSortedList(nodes, 0, len(nodes)-1)
-#endif
-
-
-
-
-
 } // namespace hedger

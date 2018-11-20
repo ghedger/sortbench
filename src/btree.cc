@@ -38,7 +38,20 @@ BTree::BTree()
 BTree::~BTree()
 {
   // TODO: Delete all nodes
+  deleteRecursive(root_);
 }
+
+void BTree::deleteRecursive(hedger::Node *node)
+{
+  if (node && node->data) {
+    deleteRecursive(node->left);
+    deleteRecursive(node->right);
+    delete node->data;
+    node->data = nullptr;
+    delete node;
+  }
+}
+
 
 Node *BTree::add(hedger::S_T key, int *depth)
 {
@@ -85,16 +98,27 @@ Node *BTree::add(hedger::S_T key, int *depth)
   return node;
 }
 
+// remove
+//
+// TODO: Implement
+//
+// Entry:
+// Exit:
 bool BTree::remove(hedger::S_T key)
 {
   bool result = false;
   return result;
 }
 
+// find
+//
+// Find node by key.
+//
+// Entry: key
+// Exit: node
 void *BTree::find(hedger::S_T key)
 {
   hedger::Node *node = findRecurse(key, root_);
-
   return node;
 }
 

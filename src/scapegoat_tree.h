@@ -41,7 +41,7 @@ class ScapegoatTree : public hedger::BTree
     bool isBalancedAtNode(hedger::Node *node);
     int sizeOfSubtree(hedger::Node *node);
     int packIntoArray(hedger::Node *node, hedger::Node *rebuildArray[], int i);
-    hedger::Node *rebalance(hedger::Node *node);
+    void rebalance(hedger::Node *node);
     hedger::Node *buildBalanced(hedger::Node **rebuildArray, int i, int nodeTot);
 };
 } // namespace hedger

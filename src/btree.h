@@ -56,8 +56,10 @@ class BTree
     void print(hedger::Node *node = nullptr);
 
   protected:
+    void deleteRecursive(hedger::Node *node);
     void changeSize(int);
     Node *findRecurse(hedger::S_T key, hedger::Node *node);
+
 
     Node *  root_;
     Node *  size_;
