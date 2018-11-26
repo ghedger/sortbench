@@ -54,6 +54,7 @@ class BTree
     bool remove(hedger::S_T key);
     void *find(hedger::S_T key);
     void print(hedger::Node *node = nullptr);
+    int maxDepth();
 
   protected:
     void deleteRecursive(hedger::Node *node);
