@@ -101,28 +101,32 @@ int test(hedger::Algo *o, hedger::S_T *arr, size_t size)
   return result;
 }
 
-// TEMP; REMOVE
-int cmp(const void *a, const void *b)
-{
-  return 0;
-}
-
+// testBTree()
+//
+// Test a btree
+//
+// Entry: -
+// Exit:  -
 void testBtree()
 {
   hedger::ScapegoatTree btree;
 
-  btree.add(17);
-  btree.add(2);
-  btree.add(27);
-  btree.add(3);
-  btree.add(9);
-  btree.add(6);
-  btree.add(5);
-  btree.add(7);
-  btree.add(24);
+  size_t array_size = 16384;
+  hedger::S_T *array = createUniqueDataSet( array_size );
+
+  if (!array) {
+    // TODO: LOG ERROR
+    return;
+  }
+
+  for (size_t i = 0; i < array_size; i++) {
+    btree.add(array[i]);
+  }
 
   btree.print();
 
+  delete array;
+  return;
 }
 
 int main(int argc, const char **argv)

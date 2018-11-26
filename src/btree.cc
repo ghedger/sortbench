@@ -52,12 +52,18 @@ void BTree::deleteRecursive(hedger::Node *node)
   }
 }
 
-
+// add
+//
+// Adds a node and returns pointer to the node.
+// Calls itself recursively.
+//
+// Entry: key
+// Exit:  -
 Node *BTree::add(hedger::S_T key, int *depth)
 {
   hedger::Node *node = new hedger::Node(key);
 
-  // Is this the first node in the tree?
+  // Is this the first node in the tree? If so, we are done!
   if (nullptr == root_) {
     root_ = node;
     q_++;
@@ -109,6 +115,20 @@ bool BTree::remove(hedger::S_T key)
   bool result = false;
   return result;
 }
+
+// maxDepth
+//
+// Report the maximum depth of the tree.
+// TODO: Implement
+//
+// Entry:
+// Exit:
+int BTree::maxDepth()
+{
+  // Traverse the tree beginning from the root and keep a high-water mark of
+  // maximum depth, and return it.
+}
+
 
 // find
 //
