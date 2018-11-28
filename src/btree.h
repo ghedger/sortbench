@@ -57,6 +57,7 @@ class BTree
     int maxDepth();
 
   protected:
+    int maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth);
     void deleteRecursive(hedger::Node *node);
     void changeSize(int);
     Node *findRecurse(hedger::S_T key, hedger::Node *node);

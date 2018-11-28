@@ -127,7 +127,34 @@ int BTree::maxDepth()
 {
   // Traverse the tree beginning from the root and keep a high-water mark of
   // maximum depth, and return it.
+  int maxDepth = 0;
+
+  if (root_) {
+    maxDepthRecurse(root_, 0, &maxDepth);
+  }
+
+  return maxDepth;
 }
+
+int BTree::maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
+{
+  // Terminal leaf node?
+  if (!node->left && !node->right) {
+    // update high water mark
+    if (depth > *maxDepth) {
+      *maxDepth = depth;
+    }
+    printf( "%d\n", depth);
+  } else {
+    if (node->left) {
+      maxDepthRecurse(node->left, depth + 1, maxDepth);
+    }
+    if (node->right) {
+      maxDepthRecurse(node->right, depth + 1, maxDepth);
+    }
+  }
+}
+
 
 
 // find
