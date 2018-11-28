@@ -54,27 +54,27 @@ int MergeSort::test(int *array, std::size_t size)
 // Exit:  -
 void MergeSort::merge(int *arr, int start, int mid, int end)
 {
-  int * tmp_arr = NULL;
+  int *tmp_arr = NULL;
   int i = 0;
-  int l1 = start;
-  int r1 = mid;
-  int l2 = mid + 1;
-  int r2 = end;
+  int left1 = start;
+  int right1 = mid;
+  int left2 = mid + 1;
+  int right2 = end;
 
   tmp_arr = new int[ end - start + 1 ];
 
-  while((l1 <= r1) && (l2 <= r2))
+  while((left1 <= right1) && (left2 <= right2))
   {
-    if(arr[l1] < arr[l2])
-      tmp_arr[i++] = arr[l1++];
+    if(arr[left1] < arr[left2])
+      tmp_arr[i++] = arr[left1++];
     else
-      tmp_arr[i++] = arr[l2++];
+      tmp_arr[i++] = arr[left2++];
   }
 
-  while(l1 <= r1)
-    tmp_arr[i++] = arr[l1++];
-  while(l2 <= r2)
-    tmp_arr[i++] = arr[l2++];
+  while(left1 <= right1)
+    tmp_arr[i++] = arr[left1++];
+  while(left2 <= right2)
+    tmp_arr[i++] = arr[left2++];
 
   for(i = start; i <= end; i++) {
     arr[i] = tmp_arr[i - start];
@@ -100,11 +100,14 @@ void MergeSort::sort(int *arr, int start, int end)
   if(start < end)
   {
     mid = (start + end) / 2;
+    printf("S: %d  M: %d E: %d\n",start, mid, end);
     sort(arr, start, mid);
     sort(arr, mid+1, end);
 
     // printf( " merge: %d %d %d\n", start, mid, end );
     merge(arr, start, mid, end);
+  } else {
+    printf("(zero-length subarray; exit)\n");
   }
 }
 } // namespace hedger
