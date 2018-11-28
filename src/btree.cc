@@ -32,7 +32,7 @@ BTree::BTree()
   root_ = nullptr;
   size_ = 0;
   maxSize_ = 0;
-  q_ = 0;
+  nodeTot_ = 0;
 }
 
 BTree::~BTree()
@@ -66,7 +66,7 @@ Node *BTree::add(hedger::S_T key, int *depth)
   // Is this the first node in the tree? If so, we are done!
   if (nullptr == root_) {
     root_ = node;
-    q_++;
+    nodeTot_++;
     *depth = 1;
     return node;
   }
@@ -100,20 +100,83 @@ Node *BTree::add(hedger::S_T key, int *depth)
   node->right = nullptr;
   changeSize(1);
 
-  q_++;
+  nodeTot_++;
   return node;
 }
 
-// remove
+bool BTree::deleteKey(hedger::S_T key)
+{
+  bool result = false;              // assume failure
+  hedger::Node *node = find(key);
+  if (node) {
+    deleteNode(node, key);
+    result = true;
+  }
+  return result;
+}
+
+// deleteNode
 //
-// TODO: Implement
+// remove node accounting for children
 //
 // Entry:
 // Exit:
-bool BTree::remove(hedger::S_T key)
+hedger::Node *BTree::deleteNode(hedger::Node *node, hedger::S_T key)
 {
-  bool result = false;
-  return result;
+  if (node) {
+    if (key < node->key) {
+      // target key is smaller; it's to the left
+      node->left = deleteNode(node->left, key);
+    } else if (key > node->key) {
+      // target key is greater; it's to the right
+      node->right = deleteNode(node->right, key);
+    } else {
+      // Case 0: Zero or single child: update linkage
+      if (nullptr == node->left) {
+        hedger::Node *successor = node->right;
+        if (node->parent->left == node) {
+          node->parent->left = successor;
+        } else if (node->parent->right == node) {
+          node->parent->right = successor;
+        }
+        delete node;
+        return successor;
+      } else if (nullptr == node->right) {
+        hedger::Node *successor = node->left;
+        if (node->parent->left == node) {
+          node->parent->left = successor;
+        } else if (node->parent->right == node) {
+          node->parent->right = successor;
+        }
+        delete node;
+        return successor;
+      }
+
+      // Case 2: Two children... need to surgically (recursively)
+      // find successor and replace deleted node with that.
+      hedger::Node *successor = findMin(node->right);
+      node->key = successor->key;
+      // TODO: Consider using a smart pointer for "data"
+      delete node->data;
+      node->data = successor->data;
+      successor->data = nullptr;
+      node->right = deleteNode(node->right, successor->key);
+    }
+  }
+  return node;
+}
+
+// removeFindMin
+//
+// Entry: pointer righthand child of node to be deleted
+//
+hedger::Node *BTree::findMin(hedger::Node *node)
+{
+  hedger::Node *current = node;
+  while (current->left != nullptr) {
+    current = current->left;
+  }
+  return current;
 }
 
 // maxDepth
@@ -163,7 +226,7 @@ int BTree::maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
 //
 // Entry: key
 // Exit: node
-void *BTree::find(hedger::S_T key)
+hedger::Node *BTree::find(hedger::S_T key)
 {
   hedger::Node *node = findRecurse(key, root_);
   return node;

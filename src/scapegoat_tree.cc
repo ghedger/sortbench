@@ -62,7 +62,7 @@ hedger::Node *ScapegoatTree::add(hedger::S_T key)
   hedger::Node *node = BTree::add(key, &depth);
 
   // Is it time to rebalance?
-  int q = log32(q_);
+  int q = log32(nodeTot_);
   if (depth > q) {
     // Walk up tree starting at our node.
     hedger::Node *walk = node->parent;

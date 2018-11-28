@@ -54,7 +54,7 @@ int MergeSort::test(int *array, std::size_t size)
 // Exit:  -
 void MergeSort::merge(int *arr, int start, int mid, int end)
 {
-  int *tmp_arr = NULL;
+  int *tmp_arr = nullptr;
   int i = 0;
   int left1 = start;
   int right1 = mid;
@@ -100,14 +100,10 @@ void MergeSort::sort(int *arr, int start, int end)
   if(start < end)
   {
     mid = (start + end) / 2;
-    printf("S: %d  M: %d E: %d\n",start, mid, end);
+
     sort(arr, start, mid);
     sort(arr, mid+1, end);
 
-    // printf( " merge: %d %d %d\n", start, mid, end );
     merge(arr, start, mid, end);
-  } else {
-    printf("(zero-length subarray; exit)\n");
-  }
-}
+  } }
 } // namespace hedger

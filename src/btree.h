@@ -46,28 +46,28 @@ struct Node
 
 class BTree
 {
-  public:
-    BTree();
-    virtual ~BTree();
+ public:
+  BTree();
+  virtual ~BTree();
 
-    Node *add(hedger::S_T key, int *depth = NULL);
-    bool remove(hedger::S_T key);
-    void *find(hedger::S_T key);
-    void print(hedger::Node *node = nullptr);
-    int maxDepth();
+  Node *add(hedger::S_T key, int *depth = NULL);
+  hedger::Node *deleteNode(hedger::Node *node, hedger::S_T key);
+  bool deleteKey(hedger::S_T key);
+  hedger::Node *find(hedger::S_T key);
+  void print(hedger::Node *node = nullptr);
+  int maxDepth();
 
-  protected:
-    int maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth);
-    void deleteRecursive(hedger::Node *node);
-    void changeSize(int);
-    Node *findRecurse(hedger::S_T key, hedger::Node *node);
+ protected:
+  hedger::Node* findMin(hedger::Node *node);
+  int maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth);
+  void deleteRecursive(hedger::Node *node);
+  void changeSize(int);
+  Node *findRecurse(hedger::S_T key, hedger::Node *node);
 
-
-    Node *  root_;
-    Node *  size_;
-    Node *  maxSize_;
-
-    int q_;
+  Node *  root_;
+  Node *  size_;
+  Node *  maxSize_;
+  int     nodeTot_;
 };
 } // namespace hedger
 #endif // #ifndef BTREE_H_

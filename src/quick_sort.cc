@@ -66,6 +66,14 @@ int QuickSort::findPartition(hedger::S_T *arr, int start, int end)
   return partition;
 }
 
+// sort
+// Perform the sorting.
+// TODO: Apply R.C. Singleton's optimization (Knuth Vol.3 2nd Ed. p.123) or
+//   a variant thereof to avoid the n^2 penalty for an already-sorted array.
+//
+// Entry: pointer to array
+//        start index
+//        end index
 void QuickSort::sort(hedger::S_T *arr, int start, int end)
 {
   if (start < end) {

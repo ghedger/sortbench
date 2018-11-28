@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with sortbench.  If not, see <https://www.gnu.org/licenses/>.
 //
-// Copyright (C) 2018 Gregory Hedger
-//
 
 #include <stdio.h>
 #include <math.h>
@@ -107,11 +105,10 @@ int test(hedger::Algo *o, hedger::S_T *arr, size_t size)
 //
 // Entry: -
 // Exit:  -
-void testBtree()
+void testBtree(size_t array_size)
 {
   hedger::ScapegoatTree btree;
 
-  size_t array_size = 16384;
   hedger::S_T *array = createUniqueDataSet( array_size );
 
   if (!array) {
@@ -124,6 +121,25 @@ void testBtree()
   }
 
   btree.print();
+  int maxDepth = btree.maxDepth();
+  printf( "\nMAX DEPTH: %d\n", maxDepth);
+
+  for (auto i = 0; i < array_size; i++)
+  {
+    hedger::Node *node = btree.find(i);
+    printf("FIND: %08x\t", node );
+  }
+
+  printf("\n");
+  btree.deleteKey(17);
+
+  for (auto i = 0; i < array_size; i++)
+  {
+    hedger::Node *node = btree.find(i);
+    printf("FIND: %08x\t", node );
+  }
+
+  printf("\n");
 
   delete array;
   return;
@@ -132,10 +148,20 @@ void testBtree()
 int main(int argc, const char **argv)
 {
   int result = 0;
+#if 1
+  size_t array_size = 0;
 
-  testBtree();
+  if (argc < 2) {
+    printUsage();
+    return -1;
+  }
 
-#if 0
+
+  sscanf(argv[1], "%d", (int *) &array_size);
+
+  testBtree(array_size);
+
+#else
   hedger::MergeSort *mergeSort = new hedger::MergeSort();
   hedger::QuickSort *quickSort = new hedger::QuickSort();
 
@@ -166,8 +192,8 @@ int main(int argc, const char **argv)
     printf( "BEFORE:\n" );
     printArray(array, array_size);
 
-    //test( mergeSort, array, array_size );
-    test( quickSort, array, array_size );
+    test( mergeSort, array, array_size );
+    //test( quickSort, array, array_size );
 
     printf( "AFTER:\n" );
     printArray(array, array_size);
