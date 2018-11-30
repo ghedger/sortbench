@@ -32,9 +32,9 @@ class MergeSort : public Algo
   public:
     MergeSort();
     virtual ~MergeSort();
-    int test(int *arr, std::size_t size);
-    void merge(int *arr, int start, int mid, int end);
-    void sort(int *arr, int start, int end);
+    int Test(int *arr, std::size_t size);
+    void Merge(int *arr, int start, int mid, int end);
+    void Sort(int *arr, int start, int end);
 };
 }
 

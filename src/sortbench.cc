@@ -29,7 +29,7 @@
 // printUsage
 //
 // Present the user with the usage instructions
-void printUsage()
+void PrintUsage()
 {
   printf("sortbench\n" );
   printf("Usage:\n" );
@@ -43,7 +43,7 @@ void printUsage()
 // Entry: pointer
 //        number of items to print
 // Exit:  -
-void printArray(const hedger::S_T *array, size_t n)
+void PrintArray(const hedger::S_T *array, size_t n)
 {
   for(size_t i = 0; i < n; i++) {
     printf("%04x\t", array[i]);
@@ -57,7 +57,7 @@ void printArray(const hedger::S_T *array, size_t n)
 //
 // Entry: size
 // Exit:  pointer to array
-hedger::S_T * createUniqueDataSet(size_t size)
+hedger::S_T * CreateUniqueDataSet(size_t size)
 {
   // Allocate the array
   hedger::S_T *array = new hedger::S_T[ size ];
@@ -93,9 +93,9 @@ hedger::S_T * createUniqueDataSet(size_t size)
 // Entry: pointer to algorithm object
 //        pointer to array
 //        size of array
-int test(hedger::Algo *o, hedger::S_T *arr, size_t size)
+int Test(hedger::Algo *o, hedger::S_T *arr, size_t size)
 {
-  int result = o->test(arr, size);
+  int result = o->Test(arr, size);
   return result;
 }
 
@@ -105,11 +105,11 @@ int test(hedger::Algo *o, hedger::S_T *arr, size_t size)
 //
 // Entry: -
 // Exit:  -
-void testBtree(size_t array_size)
+void TestBtree(size_t array_size)
 {
   hedger::ScapegoatTree btree;
 
-  hedger::S_T *array = createUniqueDataSet( array_size );
+  hedger::S_T *array = CreateUniqueDataSet( array_size );
 
   if (!array) {
     // TODO: LOG ERROR
@@ -117,25 +117,25 @@ void testBtree(size_t array_size)
   }
 
   for (size_t i = 0; i < array_size; i++) {
-    btree.add(array[i]);
+    btree.Add(array[i]);
   }
 
-  btree.print();
-  int maxDepth = btree.maxDepth();
+  btree.Print();
+  int maxDepth = btree.MaxDepth();
   printf( "\nMAX DEPTH: %d\n", maxDepth);
 
   for (auto i = 0; i < array_size; i++)
   {
-    hedger::Node *node = btree.find(i);
+    hedger::Node *node = btree.Find(i);
     printf("FIND: %08x\t", node );
   }
 
   printf("\n");
-  btree.deleteKey(17);
+  btree.DeleteKey(17);
 
   for (auto i = 0; i < array_size; i++)
   {
-    hedger::Node *node = btree.find(i);
+    hedger::Node *node = btree.Find(i);
     printf("FIND: %08x\t", node );
   }
 
@@ -148,7 +148,7 @@ void testBtree(size_t array_size)
 int main(int argc, const char **argv)
 {
   int result = 0;
-#if 1
+#if 0
   size_t array_size = 0;
 
   if (argc < 2) {
@@ -159,7 +159,7 @@ int main(int argc, const char **argv)
 
   sscanf(argv[1], "%d", (int *) &array_size);
 
-  testBtree(array_size);
+  TestBtree(array_size);
 
 #else
   hedger::MergeSort *mergeSort = new hedger::MergeSort();
@@ -167,7 +167,7 @@ int main(int argc, const char **argv)
 
   // Gather user parameters: array_size, array_tot, thread_tot
   if (argc < 4) {
-    printUsage();
+    PrintUsage();
     return -1;
   }
 
@@ -181,22 +181,22 @@ int main(int argc, const char **argv)
 
   // Validate params
   if (!array_size || !array_tot || !thread_tot) {
-    printUsage();
+    PrintUsage();
     return -1;
   }
 
   // Create the unique unsorted data set
-  hedger::S_T *array = createUniqueDataSet( array_size );
+  hedger::S_T *array = CreateUniqueDataSet( array_size );
 
   if (array) {
     printf( "BEFORE:\n" );
-    printArray(array, array_size);
+    PrintArray(array, array_size);
 
-    test( mergeSort, array, array_size );
+    Test( mergeSort, array, array_size );
     //test( quickSort, array, array_size );
 
     printf( "AFTER:\n" );
-    printArray(array, array_size);
+    PrintArray(array, array_size);
   } else {
     // TODO: SEND TO LOGGER
     printf("Failed to allocate data set array.\n");

@@ -10,9 +10,9 @@ class QuickSort : public Algo
   public:
     QuickSort();
     virtual ~QuickSort();
-    int test(int *arr, std::size_t size);
-    int findPartition(hedger::S_T *arr, int start, int end);
-    void sort(hedger::S_T *arr, int start, int end);
+    int Test(int *arr, std::size_t size);
+    int FindPartition(hedger::S_T *arr, int start, int end);
+    void Sort(hedger::S_T *arr, int start, int end);
 };
 }
 

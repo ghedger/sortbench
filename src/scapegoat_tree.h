@@ -33,16 +33,16 @@ class ScapegoatTree : public hedger::BTree
   public:
     ScapegoatTree();
     virtual ~ScapegoatTree();
-    hedger::Node *add(hedger::S_T key);
+    hedger::Node *Add(hedger::S_T key);
 
   private:
-    static int const log32(int q);
-    hedger::Node *findScapegoat(hedger::Node *node);
-    bool isBalancedAtNode(hedger::Node *node);
-    int sizeOfSubtree(hedger::Node *node);
-    int packIntoArray(hedger::Node *node, hedger::Node *rebuildArray[], int i);
-    void rebalance(hedger::Node *node);
-    hedger::Node *buildBalanced(hedger::Node **rebuildArray, int i, int nodeTot);
+    static int const Log32(int q);
+    hedger::Node *FindScapegoat(hedger::Node *node);
+    bool IsBalancedAtNode(hedger::Node *node);
+    int SizeOfSubtree(hedger::Node *node);
+    int PackIntoArray(hedger::Node *node, hedger::Node *rebuildArray[], int i);
+    void Rebalance(hedger::Node *node);
+    hedger::Node *BuildBalanced(hedger::Node **rebuildArray, int i, int nodeTot);
 };
 } // namespace hedger
 #endif // #ifndef SCAPEGOAT_H_

@@ -33,11 +33,11 @@ QuickSort::QuickSort() {
 QuickSort::~QuickSort() {
 }
 
-int QuickSort::test(int *array, std::size_t size)
+int QuickSort::Test(int *array, std::size_t size)
 {
   int result = 0;
 
-  sort( array, 0, size - 1 );
+  Sort( array, 0, size - 1 );
 
   return result;
 }
@@ -46,41 +46,47 @@ int QuickSort::test(int *array, std::size_t size)
 // Class-specific Implementation
 //
 
-int QuickSort::findPartition(hedger::S_T *arr, int start, int end)
+// findPartition
+// Find the next partition for sorting
+// Entry: pointer to array
+//        start index
+//        end index
+int QuickSort::FindPartition(hedger::S_T *arr, int start, int end)
 {
-  int pivotMag = arr[end];
-  int partition=start;
-  int i, t;
+  int pivot_mag = arr[end];
+  int partition = start;
+  int i;
+  hedger::S_T swap;
+
   for (i = start; i < end; i++) {
-    if (arr[i] <= pivotMag) {
-      t = arr[i];
+    if (arr[i] <= pivot_mag) {
+      swap = arr[i];
       arr[i] = arr[partition];
-      arr[partition] = t;
+      arr[partition] = swap;
       partition++;
     }
   }
 
-  t = arr[end];
+  swap = arr[end];
   arr[end] = arr[partition];
-  arr[partition] = t;
+  arr[partition] = swap;
   return partition;
 }
 
 // sort
 // Perform the sorting.
 // TODO: Apply R.C. Singleton's optimization (Knuth Vol.3 2nd Ed. p.123) or
-//   a variant thereof to avoid the n^2 penalty for an already-sorted array.
+//   a variant thereof to avoid the O(n^2) penalty for an already-sorted array.
 //
 // Entry: pointer to array
 //        start index
 //        end index
-void QuickSort::sort(hedger::S_T *arr, int start, int end)
+void QuickSort::Sort(hedger::S_T *arr, int start, int end)
 {
   if (start < end) {
-    int partition = findPartition(arr, start, end);
-    sort(arr, start, partition - 1);
-    sort(arr, partition + 1, end);
+    int partition = FindPartition(arr, start, end);
+    Sort(arr, start, partition - 1);
+    Sort(arr, partition + 1, end);
   }
 }
-
 } // namespace hedger

@@ -33,11 +33,11 @@ MergeSort::MergeSort() {
 MergeSort::~MergeSort() {
 }
 
-int MergeSort::test(int *array, std::size_t size)
+int MergeSort::Test(int *array, std::size_t size)
 {
   int result = 0;
 
-  sort( array, 0, size - 1 );
+  Sort( array, 0, size - 1 );
 
   return result;
 }
@@ -52,7 +52,7 @@ int MergeSort::test(int *array, std::size_t size)
 //        middle index
 //        end index
 // Exit:  -
-void MergeSort::merge(int *arr, int start, int mid, int end)
+void MergeSort::Merge(int *arr, int start, int mid, int end)
 {
   int *tmp_arr = nullptr;
   int i = 0;
@@ -93,7 +93,7 @@ void MergeSort::merge(int *arr, int start, int mid, int end)
 //        start index (typically 0)
 //        end index (typically end-1)
 // Exit:  -
-void MergeSort::sort(int *arr, int start, int end)
+void MergeSort::Sort(int *arr, int start, int end)
 {
   int mid = 0;
 
@@ -101,9 +101,9 @@ void MergeSort::sort(int *arr, int start, int end)
   {
     mid = (start + end) / 2;
 
-    sort(arr, start, mid);
-    sort(arr, mid+1, end);
+    Sort(arr, start, mid);
+    Sort(arr, mid+1, end);
 
-    merge(arr, start, mid, end);
+    Merge(arr, start, mid, end);
   } }
 } // namespace hedger

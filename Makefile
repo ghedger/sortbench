@@ -13,7 +13,7 @@ SRCEXT      := cc
 DEPEXT      := d
 OBJEXT      := o
 
-VERSION			:= 2.1
+VERSION			:= 1.0
 PKG         := sortbench
 
 INSTDIR = /usr/local/bin/$(EXE)
@@ -25,9 +25,9 @@ CONFDIR = ~/$(TARGET)
 #CFLAGS      := -Wall -O0 -pg -ggdb -c
 #LFLAGS      := -pg
 #DEBUGGING
-CFLAGS      := -std=c++11 -Wall -O0 -ggdb -c -finstrument-functions
+CFLAGS      := -std=c++14 -Wall -O0 -ggdb -c -finstrument-functions
 #OPTIMIZED
-#CFLAGS      := -std=c++11 -Wall -O3 -c
+#CFLAGS      := -std=c++14 -Wall -O3 -c
 CFLAGS 		+= $(CURL_CFLAGS)
 
 LIB 				:=

@@ -38,15 +38,15 @@ BTree::BTree()
 BTree::~BTree()
 {
   // TODO: Delete all nodes
-  deleteRecursive(root_);
+  DeleteRecursive(root_);
 }
 
-void BTree::deleteRecursive(hedger::Node *node)
+void BTree::DeleteRecursive(hedger::Node *node)
 {
   if (node && node->data) {
-    deleteRecursive(node->left);
-    deleteRecursive(node->right);
-    delete node->data;
+    DeleteRecursive(node->left);
+    DeleteRecursive(node->right);
+    delete (int *) node->data;
     node->data = nullptr;
     delete node;
   }
@@ -59,7 +59,7 @@ void BTree::deleteRecursive(hedger::Node *node)
 //
 // Entry: key
 // Exit:  -
-Node *BTree::add(hedger::S_T key, int *depth)
+Node *BTree::Add(hedger::S_T key, int *depth)
 {
   hedger::Node *node = new hedger::Node(key);
 
@@ -98,18 +98,18 @@ Node *BTree::add(hedger::S_T key, int *depth)
   }
   node->left = nullptr;
   node->right = nullptr;
-  changeSize(1);
+  ChangeSize(1);
 
   nodeTot_++;
   return node;
 }
 
-bool BTree::deleteKey(hedger::S_T key)
+bool BTree::DeleteKey(hedger::S_T key)
 {
   bool result = false;              // assume failure
-  hedger::Node *node = find(key);
+  hedger::Node *node = Find(key);
   if (node) {
-    deleteNode(node, key);
+    DeleteNode(node, key);
     result = true;
   }
   return result;
@@ -121,15 +121,15 @@ bool BTree::deleteKey(hedger::S_T key)
 //
 // Entry:
 // Exit:
-hedger::Node *BTree::deleteNode(hedger::Node *node, hedger::S_T key)
+hedger::Node *BTree::DeleteNode(hedger::Node *node, hedger::S_T key)
 {
   if (node) {
     if (key < node->key) {
       // target key is smaller; it's to the left
-      node->left = deleteNode(node->left, key);
+      node->left = DeleteNode(node->left, key);
     } else if (key > node->key) {
       // target key is greater; it's to the right
-      node->right = deleteNode(node->right, key);
+      node->right = DeleteNode(node->right, key);
     } else {
       // Case 0: Zero or single child: update linkage
       if (nullptr == node->left) {
@@ -154,13 +154,13 @@ hedger::Node *BTree::deleteNode(hedger::Node *node, hedger::S_T key)
 
       // Case 2: Two children... need to surgically (recursively)
       // find successor and replace deleted node with that.
-      hedger::Node *successor = findMin(node->right);
+      hedger::Node *successor = FindMin(node->right);
       node->key = successor->key;
       // TODO: Consider using a smart pointer for "data"
-      delete node->data;
+      delete (int *) node->data;
       node->data = successor->data;
       successor->data = nullptr;
-      node->right = deleteNode(node->right, successor->key);
+      node->right = DeleteNode(node->right, successor->key);
     }
   }
   return node;
@@ -170,7 +170,7 @@ hedger::Node *BTree::deleteNode(hedger::Node *node, hedger::S_T key)
 //
 // Entry: pointer righthand child of node to be deleted
 //
-hedger::Node *BTree::findMin(hedger::Node *node)
+hedger::Node *BTree::FindMin(hedger::Node *node)
 {
   hedger::Node *current = node;
   while (current->left != nullptr) {
@@ -186,20 +186,20 @@ hedger::Node *BTree::findMin(hedger::Node *node)
 //
 // Entry:
 // Exit:
-int BTree::maxDepth()
+int BTree::MaxDepth()
 {
   // Traverse the tree beginning from the root and keep a high-water mark of
   // maximum depth, and return it.
   int maxDepth = 0;
 
   if (root_) {
-    maxDepthRecurse(root_, 0, &maxDepth);
+    MaxDepthRecurse(root_, 0, &maxDepth);
   }
 
   return maxDepth;
 }
 
-int BTree::maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
+void BTree::MaxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
 {
   // Terminal leaf node?
   if (!node->left && !node->right) {
@@ -210,10 +210,10 @@ int BTree::maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
     printf( "%d\n", depth);
   } else {
     if (node->left) {
-      maxDepthRecurse(node->left, depth + 1, maxDepth);
+      MaxDepthRecurse(node->left, depth + 1, maxDepth);
     }
     if (node->right) {
-      maxDepthRecurse(node->right, depth + 1, maxDepth);
+      MaxDepthRecurse(node->right, depth + 1, maxDepth);
     }
   }
 }
@@ -226,9 +226,9 @@ int BTree::maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth)
 //
 // Entry: key
 // Exit: node
-hedger::Node *BTree::find(hedger::S_T key)
+hedger::Node *BTree::Find(hedger::S_T key)
 {
-  hedger::Node *node = findRecurse(key, root_);
+  hedger::Node *node = FindRecurse(key, root_);
   return node;
 }
 
@@ -236,7 +236,7 @@ hedger::Node *BTree::find(hedger::S_T key)
 // Helper functions
 //
 
-void BTree::changeSize(int delta)
+void BTree::ChangeSize(int delta)
 {
   if(size_ + delta > 0 ) {
     size_ += delta;
@@ -249,7 +249,7 @@ void BTree::changeSize(int delta)
 //
 // Entry: -
 // Exit:  -
-void BTree::print(hedger::Node *node)
+void BTree::Print(hedger::Node *node)
 {
   if (!node) {
     node = root_;
@@ -257,25 +257,31 @@ void BTree::print(hedger::Node *node)
       return;
     }
   }
-  printf("%08x:%d (p:%08x l:%08x r:%08x)\n", node, node->key, node->parent, node->left, node->right);
+
+  printf("%08x:%d (p:%08x l:%08x r:%08x)\n",
+    (int) *((int *) node),
+    node->key,
+    (int) *((int *) node->parent),
+    (int) *((int *) node->left),
+    (int) *((int *) node->right));
   if (node->left) {
-    print(node->left);
+    Print(node->left);
   }
   if (node->right) {
-    print(node->right);
+    Print(node->right);
   }
 }
 
-hedger::Node *BTree::findRecurse(hedger::S_T key, hedger::Node *node)
+hedger::Node *BTree::FindRecurse(hedger::S_T key, hedger::Node *node)
 {
   if (node) {
     if (node->key == key) {
       return node;
     }
     if (node->key > key) {
-      return findRecurse(key, node->left);
+      return FindRecurse(key, node->left);
     } else if(node->key < key) {
-      return findRecurse(key, node->right);
+      return FindRecurse(key, node->right);
     } else {
       // TODO: Equal case - duplicate keys disallowed
     }

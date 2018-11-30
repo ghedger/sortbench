@@ -50,19 +50,19 @@ class BTree
   BTree();
   virtual ~BTree();
 
-  Node *add(hedger::S_T key, int *depth = NULL);
-  hedger::Node *deleteNode(hedger::Node *node, hedger::S_T key);
-  bool deleteKey(hedger::S_T key);
-  hedger::Node *find(hedger::S_T key);
-  void print(hedger::Node *node = nullptr);
-  int maxDepth();
+  Node *Add(hedger::S_T key, int *depth = NULL);
+  hedger::Node *DeleteNode(hedger::Node *node, hedger::S_T key);
+  bool DeleteKey(hedger::S_T key);
+  hedger::Node *Find(hedger::S_T key);
+  void Print(hedger::Node *node = nullptr);
+  int MaxDepth();
 
  protected:
-  hedger::Node* findMin(hedger::Node *node);
-  int maxDepthRecurse(hedger::Node *node, int depth, int *maxDepth);
-  void deleteRecursive(hedger::Node *node);
-  void changeSize(int);
-  Node *findRecurse(hedger::S_T key, hedger::Node *node);
+  hedger::Node* FindMin(hedger::Node *node);
+  void MaxDepthRecurse(hedger::Node *node, int depth, int *maxDepth);
+  void DeleteRecursive(hedger::Node *node);
+  void ChangeSize(int);
+  Node *FindRecurse(hedger::S_T key, hedger::Node *node);
 
   Node *  root_;
   Node *  size_;
