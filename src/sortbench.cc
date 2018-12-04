@@ -124,19 +124,19 @@ void TestBtree(size_t array_size)
   int maxDepth = btree.MaxDepth();
   printf( "\nMAX DEPTH: %d\n", maxDepth);
 
-  for (auto i = 0; i < array_size; i++)
+  for (hedger::S_T i = 0; i < (hedger::S_T) array_size; i++)
   {
     hedger::Node *node = btree.Find(i);
-    printf("FIND: %08x\t", node );
+    printf("FIND: %08x\t", (int) (*(int *)node) );
   }
 
   printf("\n");
   btree.DeleteKey(17);
 
-  for (auto i = 0; i < array_size; i++)
+  for (hedger::S_T i = 0; i < (hedger::S_T) array_size; i++)
   {
     hedger::Node *node = btree.Find(i);
-    printf("FIND: %08x\t", node );
+    printf("FIND: %08x\t", (int) (*(int *)node) );
   }
 
   printf("\n");
@@ -149,6 +149,7 @@ int main(int argc, const char **argv)
 {
   int result = 0;
 #if 0
+  // TODO: Move this to a separate testbench
   size_t array_size = 0;
 
   if (argc < 2) {
@@ -162,19 +163,23 @@ int main(int argc, const char **argv)
   TestBtree(array_size);
 
 #else
+
+  // Seed random number generator (use seconds since epoch)
+  srand((unsigned int) time(NULL));
+
+  // Instantiate mergesort and quicksort algorithm classes
   hedger::MergeSort *mergeSort = new hedger::MergeSort();
   hedger::QuickSort *quickSort = new hedger::QuickSort();
 
   // Gather user parameters: array_size, array_tot, thread_tot
-  if (argc < 4) {
-    PrintUsage();
-    return -1;
-  }
-
   size_t array_size;
   int array_tot, thread_tot;
   array_size = array_tot = thread_tot = 0;
 
+  if (argc < 4) {
+    PrintUsage();
+    return -1;
+  }
   sscanf(argv[1], "%d", (int *) &array_size);
   sscanf(argv[2], "%d", &array_tot);
   sscanf(argv[3], "%d", &thread_tot);
@@ -192,8 +197,8 @@ int main(int argc, const char **argv)
     printf( "BEFORE:\n" );
     PrintArray(array, array_size);
 
-    Test( mergeSort, array, array_size );
-    //test( quickSort, array, array_size );
+    //Test( mergeSort, array, array_size );
+    Test( quickSort, array, array_size );
 
     printf( "AFTER:\n" );
     PrintArray(array, array_size);

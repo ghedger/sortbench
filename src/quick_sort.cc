@@ -46,6 +46,19 @@ int QuickSort::Test(int *array, std::size_t size)
 // Class-specific Implementation
 //
 
+// Swap
+// Swap two array values identified by index
+// Entry: pointer to array
+//        index a
+//        index b
+void QuickSort::Swap(hedger::S_T *arr, int index_a, int index_b)
+{
+  hedger::S_T swap;
+  swap = arr[index_a];
+  arr[index_a] = arr[index_b];
+  arr[index_b] = swap;
+}
+
 // findPartition
 // Find the next partition for sorting
 // Entry: pointer to array
@@ -53,23 +66,23 @@ int QuickSort::Test(int *array, std::size_t size)
 //        end index
 int QuickSort::FindPartition(hedger::S_T *arr, int start, int end)
 {
-  int pivot_mag = arr[end];
+  int pivot_mag = arr[end];     // magnitude: lesser, left; greater; right
   int partition = start;
   int i;
-  hedger::S_T swap;
 
-  for (i = start; i < end; i++) {
+  for (i = start; i < end; ++i) {
     if (arr[i] <= pivot_mag) {
-      swap = arr[i];
-      arr[i] = arr[partition];
-      arr[partition] = swap;
+      // Need to swap current index value with partition index value
+      // to get the greater value to the right of the partition
+      // We place the lesser value at the partition index and move
+      // the partition to the right.
+      Swap(arr, i, partition);
       partition++;
     }
   }
 
-  swap = arr[end];
-  arr[end] = arr[partition];
-  arr[partition] = swap;
+  // Swap the last element with the partition
+  Swap(arr, end, partition);
   return partition;
 }
 

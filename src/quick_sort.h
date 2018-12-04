@@ -7,12 +7,15 @@ namespace hedger
 {
 class QuickSort : public Algo
 {
-  public:
-    QuickSort();
-    virtual ~QuickSort();
-    int Test(int *arr, std::size_t size);
-    int FindPartition(hedger::S_T *arr, int start, int end);
-    void Sort(hedger::S_T *arr, int start, int end);
+ public:
+  QuickSort();
+  virtual ~QuickSort();
+  int Test(int *arr, std::size_t size);
+ protected:
+  int FindPartition(hedger::S_T *arr, int start, int end);
+  void Sort(hedger::S_T *arr, int start, int end);
+ private:
+  inline void Swap(hedger::S_T *arr, int index_a, int index_b);
 };
 }
 
