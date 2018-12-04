@@ -81,7 +81,9 @@ int QuickSort::FindPartition(hedger::S_T *arr, int start, int end)
     }
   }
 
-  // Swap the last element with the partition
+  // Swap the last element with the partition.
+  // At this point, all the items to the left of the partition will be less
+  // than those to the right.
   Swap(arr, end, partition);
   return partition;
 }
