@@ -20,8 +20,6 @@
 // Copyright (C) 2018 Gregory Hedger
 //
 
-
-
 #ifndef ALGO_H_
 #define ALGO_H_
 
@@ -35,8 +33,10 @@ typedef int S_T;
 // for maintaining relevant statistics on the algorithm (run time, mean, std deviation, etc)
 class Algo
 {
-  public:
-    virtual int Test(int *t, std::size_t size) = 0;
+ public:
+  Algo() {};
+  virtual ~Algo() {};
+  virtual int Test(hedger::S_T *t, std::size_t size) = 0;
 };
 }
 

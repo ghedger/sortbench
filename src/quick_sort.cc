@@ -33,12 +33,16 @@ QuickSort::QuickSort() {
 QuickSort::~QuickSort() {
 }
 
-int QuickSort::Test(int *array, std::size_t size)
+// Test
+// Implement the Test function as dictated by the Algo parent class
+// Entry: pointer to array
+//        size of array
+// Exit:  Result of test
+//
+int QuickSort::Test(hedger::S_T *array, std::size_t size)
 {
   int result = 0;
-
   Sort( array, 0, size - 1 );
-
   return result;
 }
 

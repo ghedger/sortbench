@@ -9,8 +9,8 @@ class QuickSort : public Algo
 {
  public:
   QuickSort();
-  virtual ~QuickSort();
-  int Test(int *arr, std::size_t size);
+  ~QuickSort();
+  int Test(hedger::S_T *arr, std::size_t size);
  protected:
   int Partition(hedger::S_T *arr, int start, int end);
   void Sort(hedger::S_T *arr, int start, int end);
