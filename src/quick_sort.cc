@@ -64,7 +64,7 @@ void QuickSort::Swap(hedger::S_T *arr, int index_a, int index_b)
 // Entry: pointer to array
 //        start index
 //        end index
-int QuickSort::FindPartition(hedger::S_T *arr, int start, int end)
+int QuickSort::Partition(hedger::S_T *arr, int start, int end)
 {
   int pivot_mag = arr[end];     // magnitude: lesser, left; greater; right
   int partition = start;
@@ -99,7 +99,7 @@ int QuickSort::FindPartition(hedger::S_T *arr, int start, int end)
 void QuickSort::Sort(hedger::S_T *arr, int start, int end)
 {
   if (start < end) {
-    int partition = FindPartition(arr, start, end);
+    int partition = Partition(arr, start, end);
     Sort(arr, start, partition - 1);
     Sort(arr, partition + 1, end);
   }
