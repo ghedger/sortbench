@@ -57,23 +57,16 @@ int MergeSort::Test(hedger::S_T *array, std::size_t size)
 // Class-specific Implementation
 //
 
-// Alloca
-// Inline safe alloca
-void *MergeSort::Alloca(size_t size)
-{
-  return alloca(size);
-}
-
-
 // Merge
 // Merge two subarrays.  Typically called by the mergesort() function.
-// Entry: start index
+// Entry: pointer to array
+//        start index
 //        middle index
 //        end index
 // Exit:  -
 void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
 {
-  hedger::S_T *tmp_arr;
+  hedger::S_T *tmp_arr;     // pointer to temp array
   int left1 = start;        // left of left-half <- start
   int right1 = mid;         // right of left-half <- mid
   int left2 = mid + 1;      // left of right-half <- mid + 1
