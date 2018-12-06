@@ -14,6 +14,7 @@ class QuickSort : public Algo
  protected:
   int Partition(hedger::S_T *arr, int start, int end);
   void Sort(hedger::S_T *arr, int start, int end);
+  void SortRecurse(hedger::S_T *arr, int start, int end);
  private:
   inline void Swap(hedger::S_T *arr, int index_a, int index_b);
 };

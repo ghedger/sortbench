@@ -29,12 +29,16 @@ namespace hedger
 {
 class MergeSort : public Algo
 {
-  public:
-    MergeSort();
-    virtual ~MergeSort();
-    int Test(int *arr, std::size_t size);
-    void Merge(int *arr, int start, int mid, int end);
-    void Sort(int *arr, int start, int end);
+ public:
+  MergeSort();
+  virtual ~MergeSort();
+  int Test(hedger::S_T *arr, std::size_t size);
+  void Merge(hedger::S_T *arr, int start, int mid, int end);
+  void Sort(hedger::S_T *arr, int start, int end);
+ protected:
+  inline void *Alloca(size_t);
+
+
 };
 }
 
