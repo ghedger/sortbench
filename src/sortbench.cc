@@ -31,8 +31,6 @@
 #include "algo.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
-#include "btree.h"
-#include "scapegoat_tree.h"
 
 // printUsage
 //
@@ -123,56 +121,6 @@ int Test(hedger::Algo *o, hedger::S_T *arr, size_t size)
   return result;
 }
 
-// testBTree()
-//
-// Test a btree
-//
-// Entry: -
-// Exit:  -
-void TestBtree(size_t array_size)
-{
-  hedger::ScapegoatTree btree;
-
-  hedger::S_T *array = AllocArray (array_size);
-  if (array) {
-    CreateUniqueDataSet( array, array_size );
-
-    if (!array) {
-      // TODO: LOG ERROR
-      return;
-    }
-
-    for (size_t i = 0; i < array_size; i++) {
-      btree.Add(array[i]);
-    }
-
-    btree.Print();
-    int maxDepth = btree.MaxDepth();
-    printf( "\nMAX DEPTH: %d\n", maxDepth);
-
-    for (hedger::S_T i = 0; i < (hedger::S_T) array_size; i++)
-    {
-      hedger::Node *node = btree.Find(i);
-      printf("FIND: %08x\t", (int) (*(int *)node) );
-    }
-
-    printf("\n");
-    btree.DeleteKey(17);
-
-    for (hedger::S_T i = 0; i < (hedger::S_T) array_size; i++)
-    {
-      hedger::Node *node = btree.Find(i);
-      printf("FIND: %08x\t", (int) (*(int *)node) );
-    }
-
-    printf("\n");
-    FreeArray(array);
-  } else {
-    printf("%s:%d Error allocating array.\n", __FUNCTION__, __LINE__);
-  }
-  return;
-}
-
 // ReportTiming
 // Calculate and report mean and standard deviation of timing.
 // Entry: vector of times
@@ -206,17 +154,6 @@ void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
 int main(int argc, const char **argv)
 {
   int result = 0;
-#if 0
-  // TODO: Move this to a separate testbench
-  size_t array_size = 0;
-
-  if (argc < 2) {
-    printUsage();
-    return -1;
-  }
-  sscanf(argv[1], "%d", (int *) &array_size);
-  TestBtree(array_size);
-#else
 
   // Seed random number generator (use seconds since epoch)
   srand((unsigned int) time(NULL));
@@ -302,7 +239,6 @@ int main(int argc, const char **argv)
     delete quickSort;
     quickSort = nullptr;
   }
-#endif
 
   return result;
 }
