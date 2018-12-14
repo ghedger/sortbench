@@ -24,6 +24,7 @@
 #include <alloca.h>
 #include <unistd.h>
 #include <memory.h>
+#include <malloc.h>
 
 #include <cstddef>
 #include <vector>
@@ -72,17 +73,15 @@ void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
   int left2 = mid + 1;      // left of right-half <- mid + 1
   int right2 = end;         // right of right-half <- end
 
-  // Reserve maximum amount of space in vector (prevent unecessary growth resizes).
-  // tmp_arr.reserve(end - start + 1);
-  // NOTE: alloca is not best choice for big arrays...  heap and vector are
-  // safer alternatives, but far less effient (> 3X slower in testing)
-  tmp_arr = (hedger::S_T *)alloca((end - start + 1) * sizeof(hedger::S_T));
+  // Allocate a temporary array for swapping out and re-ordering words
+  // to be copied back to original array.
+  // NOTE: alloca is much faster but non-standard and not safe.
+  tmp_arr = (hedger::S_T *) malloc((end - start + 1) * sizeof(hedger::S_T));
   hedger::S_T *next_tmp = tmp_arr;
 
   // Go through and save either left subarray or right subarray into swap array
   // according to the least at each index in the respective subarrays.
-  while((left1 <= right1) && (left2 <= right2))
-  {
+  while((left1 <= right1) && (left2 <= right2)) {
     if(arr[left1] < arr[left2])
       *next_tmp++ = arr[left1++];    // save arr[left1]
     else
@@ -96,9 +95,9 @@ void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
   while(left2 <= right2)
     *next_tmp++ = arr[left2++];      // save arr[left2]
 
-  // Finally, recover from swap array, in essence popping the data off the stack i
-  // in reverse order and storing it in the array.
+  // Finally, recover what we've saved, sorted, from the swap array.
   memcpy(&arr[start], tmp_arr, sizeof(hedger::S_T) * (end - start + 1));
+  free(tmp_arr);
 }
 
 // Sort
@@ -119,6 +118,7 @@ void MergeSort::Sort(hedger::S_T *arr, int start, int end)
     mid = (start + end) / 2;
     // We're going to break the data set into progressively smaller pieces,
     // merging each as we unwind.
+
     Sort(arr, start, mid);
     Sort(arr, mid + 1, end);
 
