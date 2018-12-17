@@ -31,6 +31,7 @@
 #include "algo.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
+#include "counting_sort.h"
 
 // printUsage
 //
@@ -81,7 +82,22 @@ void FreeArray(hedger::S_T *array)
   }
 }
 
-// createDataSet
+// createRandomDataSet
+hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size)
+{
+  size_t index = 0;
+  hedger::S_T value = 0;
+  // Generate array of scrambled unsorted non-unique data in the array
+  while (index < size) {
+    value = rand() % size;
+    array[index] = value;
+    ++index;
+  }
+
+  return array;
+}
+
+// createUniqueDataSet
 //
 // Allocates and fills an array with unique pseudo-random values.
 //
@@ -95,7 +111,7 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
   size_t index = 0;
   hedger::S_T value = 0;
   // Generate array of scrambled unsorted but unique data in the array
-  while(index < size) {
+  while (index < size) {
     // Get random number; if used, go fish again...
     do {
       value = rand() % size;
@@ -183,7 +199,7 @@ int main(int argc, const char **argv)
   // Create the unique unsorted data set
 
   // Timing variables for statistical analysis
-  std::vector<double> time_a, time_b;
+  std::vector<double> time_a, time_b, time_c;
   int iteration_count = iteration_tot;
 
   // Allocate our array
@@ -213,11 +229,24 @@ int main(int argc, const char **argv)
       ms = FpMilliseconds(stop - start);
       ms_float = ms.count();
       time_b.push_back(ms_float);
+
+      // Counting sort
+      array = CreateRandomDataSet(array, array_size);
+      PrintArray(array, array_size);
+      start = std::chrono::high_resolution_clock::now();
+      Test( quickSort, array, array_size );
+      stop = std::chrono::high_resolution_clock::now();
+      ms = FpMilliseconds(stop - start);
+      ms_float = ms.count();
+      time_c.push_back(ms_float);
+
+      PrintArray(array, array_size);
     } while (--iteration_count);
 
     // Calculate mean (mu)
     ReportTiming(time_a, iteration_tot, "Merge Sort");
     ReportTiming(time_b, iteration_tot, "Quick Sort");
+    ReportTiming(time_c, iteration_tot, "Counting Sort");
   } else {
     // TODO: SEND TO LOGGER
     printf("Failed to allocate data set array.\n");
