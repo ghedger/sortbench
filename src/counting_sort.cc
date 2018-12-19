@@ -77,21 +77,36 @@ void CountingSort::Sort(
 )
 {
   assert(range_hi > range_low);
-  // This allocates our array of unique element counts
+  // This allocates an array of unique element counts and clears it.
   int *count_arr = (int *) calloc(range_hi - range_low + 1, sizeof(int));
   assert(count_arr);
   // Here we count how many of each element and save the counts in count_arr.
   for (auto i = 0; i < size; ++i) {
-    count_arr[arr[i]-range_low]++;
+    ++count_arr[arr[i] - range_low];
   }
   // Now, we iterate through the count array and write the output.
   // For convenience, we write to the array passed in
   hedger::S_T write_value = range_low;
-  for (auto i = 0; i <= range_hi - range_low; i++) {
-    if (count_arr[i])
-      write_value = count_arr[i];
-    arr[i] = write_value;
+  hedger::S_T i;
+  size_t out_index;
+  size_t write_count;
+  i = out_index = 0;
+  while (out_index < (size_t) size) {
+    while (i < range_hi && !count_arr[i]) {
+      ++i;
+    }
+    if (i < range_hi) {
+      write_value = i + range_low;
+      write_count = count_arr[i];
+      ++i;
+    }
+    while (write_count) {
+      --write_count;
+      arr[out_index] = write_value;
+      ++out_index;
+    }
   }
+
   // Clean up and exit
   free(count_arr);
 }

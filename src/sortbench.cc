@@ -19,6 +19,7 @@
 // C headers
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 // C++ headers
 #include <iostream>
@@ -34,14 +35,37 @@
 #include "counting_sort.h"
 #include "insertion_sort.h"
 
-// printUsage
+// This global flag determines whether we print out the array.
+// Used for cursory validation of new sorting algorithms.
+static bool verbose = false;
+
+// PrintLicense
+void PrintLicense()
+{
+  using namespace std;
+  cout << "Sortbench is free software: you can redistribute it and/or modify" << endl;
+  cout << "it under the terms of the GNU General Public License as published by" << endl;
+  cout << "the Free Software Foundation, either version 3 of the License, or" << endl;
+  cout << "(at your option) any later version." << endl;
+  cout << "Sortbench is distributed in the hope that it will be useful," << endl;
+  cout << "but WITHOUT ANY WARRANTY; without even the implied warranty of" << endl;
+  cout << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << endl;
+  cout << "GNU General Public License for more details." << endl;
+  cout << "You should have received a copy of the GNU General Public License" << endl;
+  cout << "along with sortbench.  If not, see <https://www.gnu.org/licenses/>." << endl;
+}
+
+// PrintUsage
 //
 // Present the user with the usage instructions
 void PrintUsage()
 {
-  printf("sortbench\n" );
-  printf("Usage:\n" );
-  printf("\tsortbench <array_size> <iteration_total>\n");
+  using namespace std;
+  cout << "sortbench" << endl;
+  cout << "Copyright (C) 2018 Greg Hedger" << endl;
+  PrintLicense();
+  cout << "Usage:" << endl;
+  cout << "\tsortbench [-v] <array_size> <iteration_total>" << endl;
 }
 
 // printArray
@@ -53,8 +77,14 @@ void PrintUsage()
 // Exit:  -
 void PrintArray(const hedger::S_T *array, size_t n)
 {
-  for(size_t i = 0; i < n; i++) {
-    printf("%04x\t", array[i]);
+  const int kColumnCount = 16;
+  int column_count = kColumnCount;
+  for (size_t i = 0; i < n; i++) {
+    printf("%04x  ", array[i]);
+    if (!--column_count) {
+      column_count = kColumnCount;
+      printf("\n");
+    }
   }
   printf("\n");
 }
@@ -187,25 +217,31 @@ void RunTest(std::vector<double>& time_arr,
   const bool unique
 )
 {
+  using namespace std;
   using FpMilliseconds =
-        std::chrono::duration<float, std::chrono::milliseconds::period>;
+        chrono::duration<float, chrono::milliseconds::period>;
   auto iteration_count = iterations;
   while (iteration_count) {
     --iteration_count;
-      // Inline timing profiling
-      // TODO: Improvement: Should have a data structure (map of vectors?) capable of storing
-      // all the algorithm rather than time_a and time_b.
-      // Merge sort
-      if (unique)
-        array = CreateUniqueDataSet(array, array_size);                 // randomise data
+      if (unique) // Determines whether to create a data set with or w/o dupes
+        array = CreateUniqueDataSet(array, array_size);
       else
-        array = CreateRandomDataSet(array, array_size, array_size / 4);                 // randomise data
-      auto start = std::chrono::high_resolution_clock::now();    // mark start time
-      Test( algorithm, array, array_size );                      // Do work
-      auto stop = std::chrono::high_resolution_clock::now();     // mark end time
-      auto ms = FpMilliseconds(stop - start);                    // get elapsed time in ms
-      double ms_float = ms.count();                              // get as a float
-      time_arr.push_back(ms_float);                                // save in our timing array
+        array = CreateRandomDataSet(array, array_size, array_size / 2);
+      if (verbose) {
+        cout << algorithm.GetName() << " BEFORE:" << endl;
+        PrintArray(array, array_size);
+      }
+
+      auto start = chrono::high_resolution_clock::now(); // mark start time
+      Test( algorithm, array, array_size ); // Do work
+      auto stop = chrono::high_resolution_clock::now();  // mark end time
+      auto ms = FpMilliseconds(stop - start); // get elapsed time in ms
+      double ms_float = ms.count(); // get as a float
+      time_arr.push_back(ms_float); // save in our timing array
+      if (verbose) {
+        cout << algorithm.GetName() << " AFTER: " << endl;
+        PrintArray(array, array_size);
+      }
   }
 }
 
@@ -236,8 +272,15 @@ int main(int argc, const char **argv)
     PrintUsage();
     return -1;
   }
-  sscanf(argv[1], "%d", (int *) &array_size);
-  sscanf(argv[2], "%d", &iteration_tot);
+
+  int arg_idx = 1;
+  if (!strcmp(argv[arg_idx], "-v")) {
+    verbose = true;
+    arg_idx++;
+  }
+
+  sscanf(argv[arg_idx++], "%d", (int *) &array_size);
+  sscanf(argv[arg_idx], "%d", &iteration_tot);
 
   // Validate params
   if (!array_size || !iteration_tot) {

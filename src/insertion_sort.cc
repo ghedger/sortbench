@@ -73,7 +73,7 @@ void InsertionSort::Sort(hedger::S_T *arr, int start, int end)
       hedger::S_T key = arr[j];
       // Insert arr[j] into the sorted sequence.
       auto i = j - 1;
-      while (i > 0 && arr[i] > key) {
+      while (i >= 0 && arr[i] > key) {
         arr[i + 1] = arr[i];
         --i;
       }
