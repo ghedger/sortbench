@@ -45,7 +45,7 @@ MergeSort::~MergeSort() {
 // Implementation of Algo's pure virtual Test()
 // Entry: pointer to array to sort
 //        size of array in hedger::S_T units
-int MergeSort::Test(hedger::S_T *array, std::size_t size)
+int MergeSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
 

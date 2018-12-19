@@ -28,7 +28,6 @@ CONFDIR = ~/$(TARGET)
 #CFLAGS      := -std=c++14 -Wall -O0 -ggdb -c -finstrument-functions
 #OPTIMIZED
 CFLAGS      := -std=c++14 -Wall -O3 -c
-CFLAGS 		+= $(CURL_CFLAGS)
 
 LIB 				:=
 INC         := -I$(INCDIR) -I/usr/local/include

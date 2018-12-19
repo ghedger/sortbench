@@ -32,6 +32,7 @@
 #include "merge_sort.h"
 #include "quick_sort.h"
 #include "counting_sort.h"
+#include "insertion_sort.h"
 
 // printUsage
 //
@@ -83,13 +84,16 @@ void FreeArray(hedger::S_T *array)
 }
 
 // createRandomDataSet
-hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size)
+hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range = 0)
 {
   size_t index = 0;
   hedger::S_T value = 0;
+  if (!range) {
+    range = size;
+  }
   // Generate array of scrambled unsorted non-unique data in the array
   while (index < size) {
-    value = rand() % size;
+    value = (hedger::S_T) rand() % range;
     array[index] = value;
     ++index;
   }
@@ -115,6 +119,7 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
     // Get random number; if used, go fish again...
     do {
       value = rand() % size;
+      //std::cout << value << std::endl;
     } while (occupancy.find(value) != occupancy.end());
     occupancy[value] = 1;
     array[index] = value;
@@ -131,9 +136,9 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
 // Entry: pointer to algorithm object
 //        pointer to array
 //        size of array
-int Test(hedger::Algo *o, hedger::S_T *arr, size_t size)
+int Test(hedger::Algo& o, hedger::S_T *arr, size_t size)
 {
-  int result = o->Test(arr, size);
+  int result = o.Test(arr, size, size);
   return result;
 }
 
@@ -151,6 +156,7 @@ void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
       accum = accum + i;
     }
     mu = (double) accum / (double) iteration_tot;
+    double time_tot = accum;
 
     // Calculate std deviation (sigma)
     accum = 0.0;
@@ -160,23 +166,66 @@ void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
     sigma = sqrt(accum / iteration_tot);
 
     // Print report
-        std::cout << COUT_YELLOW << name << ":" << COUT_NORMAL << std::endl;
+    std::cout << COUT_YELLOW << name << ":" << COUT_NORMAL << std::endl;
     std::cout << "TRIES TOT: " << iteration_tot << std::endl;
-    std::cout << "TIME MU: " << mu << std::endl;
-    std::cout << "TIME SIGMA: " << sigma << std::endl;
+    std::cout << "TIME MU: " << mu << " ms" << std::endl;
+    std::cout << "TIME SIGMA: " << sigma << " ms" << std::endl;
+    std::cout << "TIME TOTAL: " << time_tot << " ms" << std::endl;
+}
+
+// RunTest
+// Entry: reference to timing vector
+//        reference to algorithm
+//        pointer to array buffer
+//        size of array buffer in elements
+//        # of iterations for which to test
+void RunTest(std::vector<double>& time_arr,
+  hedger::Algo& algorithm,
+  hedger::S_T *array,
+  const int array_size,
+  const int iterations,
+  const bool unique
+)
+{
+  using FpMilliseconds =
+        std::chrono::duration<float, std::chrono::milliseconds::period>;
+  auto iteration_count = iterations;
+  while (iteration_count) {
+    --iteration_count;
+      // Inline timing profiling
+      // TODO: Improvement: Should have a data structure (map of vectors?) capable of storing
+      // all the algorithm rather than time_a and time_b.
+      // Merge sort
+      if (unique)
+        array = CreateUniqueDataSet(array, array_size);                 // randomise data
+      else
+        array = CreateRandomDataSet(array, array_size, array_size / 4);                 // randomise data
+      auto start = std::chrono::high_resolution_clock::now();    // mark start time
+      Test( algorithm, array, array_size );                      // Do work
+      auto stop = std::chrono::high_resolution_clock::now();     // mark end time
+      auto ms = FpMilliseconds(stop - start);                    // get elapsed time in ms
+      double ms_float = ms.count();                              // get as a float
+      time_arr.push_back(ms_float);                                // save in our timing array
+  }
 }
 
 // main
 int main(int argc, const char **argv)
 {
+  using namespace hedger;
+  static const int kAlgoTot = 4;
   int result = 0;
+
+  Algo *algo_arr[kAlgoTot];
+
+  // TODO: Replace with Registry pattern
+  algo_arr[0] = new MergeSort();
+  algo_arr[1] = new QuickSort();
+  algo_arr[2] = new CountingSort();
+  algo_arr[3] = new InsertionSort();
 
   // Seed random number generator (use seconds since epoch)
   srand((unsigned int) time(NULL));
-
-  // Instantiate mergesort and quicksort algorithm classes
-  hedger::MergeSort *mergeSort = new hedger::MergeSort();
-  hedger::QuickSort *quickSort = new hedger::QuickSort();
 
   // Gather user parameters: array_size, iteration_tot
   size_t array_size;
@@ -196,57 +245,37 @@ int main(int argc, const char **argv)
     return -1;
   }
 
-  // Create the unique unsorted data set
-
   // Timing variables for statistical analysis
-  std::vector<double> time_a, time_b, time_c;
-  int iteration_count = iteration_tot;
-
+  std::vector<double> time_arr[kAlgoTot];
   // Allocate our array
-  hedger::S_T *array = AllocArray(array_size);
+  S_T *array = AllocArray(array_size);
   if (array) {
-    do {
-      using FpMilliseconds =
-        std::chrono::duration<float, std::chrono::milliseconds::period>;
-
-      // Inline timing profiling
-      // TODO: Improvement: Should have a data structure (map of vectors?) capable of storing
-      // all the algorithm rather than time_a and time_b.
-      // Merge sort
-      array = CreateUniqueDataSet(array, array_size);                 // randomise data
-      auto start = std::chrono::high_resolution_clock::now();    // mark start time
-      Test( mergeSort, array, array_size );                      // Do work
-      auto stop = std::chrono::high_resolution_clock::now();     // mark end time
-      auto ms = FpMilliseconds(stop - start);                    // get elapsed time in ms
-      double ms_float = ms.count();                              // get as a float
-      time_a.push_back(ms_float);                                // save in our timing array
-
-      // Quick sort
-      array = CreateUniqueDataSet(array, array_size);
-      start = std::chrono::high_resolution_clock::now();
-      Test( quickSort, array, array_size );
-      stop = std::chrono::high_resolution_clock::now();
-      ms = FpMilliseconds(stop - start);
-      ms_float = ms.count();
-      time_b.push_back(ms_float);
-
-      // Counting sort
-      array = CreateRandomDataSet(array, array_size);
-      PrintArray(array, array_size);
-      start = std::chrono::high_resolution_clock::now();
-      Test( quickSort, array, array_size );
-      stop = std::chrono::high_resolution_clock::now();
-      ms = FpMilliseconds(stop - start);
-      ms_float = ms.count();
-      time_c.push_back(ms_float);
-
-      PrintArray(array, array_size);
-    } while (--iteration_count);
-
-    // Calculate mean (mu)
-    ReportTiming(time_a, iteration_tot, "Merge Sort");
-    ReportTiming(time_b, iteration_tot, "Quick Sort");
-    ReportTiming(time_c, iteration_tot, "Counting Sort");
+    // This runs the sorting tests against a unique data set.
+    std::cout << "UNIQUE:" << std::endl;
+    for (auto i = 0; i < kAlgoTot; ++i) {
+      RunTest(
+        time_arr[i],
+        *algo_arr[i],
+        array,
+        array_size,
+        iteration_tot,
+        true
+      );
+      ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+    }
+    // This runs the sorting tests against data sets containing duplicates.
+    std::cout << "NONUNIQUE:" << std::endl;
+    for (auto i = 0; i < kAlgoTot; ++i) {
+      RunTest(
+        time_arr[i],
+        *algo_arr[i],
+        array,
+        array_size,
+        iteration_tot,
+        false
+      );
+      ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+    }
   } else {
     // TODO: SEND TO LOGGER
     printf("Failed to allocate data set array.\n");
@@ -259,14 +288,8 @@ int main(int argc, const char **argv)
     array = nullptr;
   }
 
-  if (nullptr != mergeSort) {
-    delete mergeSort;
-    mergeSort = nullptr;
-  }
-
-  if (nullptr != quickSort) {
-    delete quickSort;
-    quickSort = nullptr;
+  for (auto i = 0; i < kAlgoTot; ++i) {
+    delete algo_arr[i];
   }
 
   return result;

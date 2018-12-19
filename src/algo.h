@@ -36,7 +36,8 @@ class Algo
  public:
   Algo() {};
   virtual ~Algo() {};
-  virtual int Test(hedger::S_T *t, std::size_t size) = 0;
+  virtual int Test(hedger::S_T *t, size_t size, hedger::S_T range = 0) = 0;
+  virtual const char *GetName() = 0;
 };
 }
 

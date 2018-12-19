@@ -39,7 +39,7 @@ QuickSort::~QuickSort() {
 //        size of array
 // Exit:  Result of test
 //
-int QuickSort::Test(hedger::S_T *array, std::size_t size)
+int QuickSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
   Sort( array, 0, size - 1 );
@@ -90,7 +90,7 @@ int QuickSort::Partition(hedger::S_T *arr, int start, int end)
   return partition;
 }
 
-// sort
+// SortRecurse
 // Perform the sorting.
 // TODO: Apply R.C. Singleton's optimization (Knuth Vol.3 2nd Ed. p.123) or
 //   a variant thereof to avoid the O(n^2) penalty for an already-sorted array.

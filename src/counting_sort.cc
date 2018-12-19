@@ -46,11 +46,11 @@ CountingSort::~CountingSort() {
 // Implementation of Algo's pure virtual Test()
 // Entry: pointer to array to sort
 //        size of array in hedger::S_T units
-int CountingSort::Test(hedger::S_T *array, std::size_t size)
+int CountingSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
 
-  Sort(array,size - 1, 0, 16384);
+  Sort(array,size - 1, 0, range);
 
   return result;
 }

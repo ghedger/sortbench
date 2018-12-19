@@ -1,6 +1,6 @@
-// counting_sort.h
+// insertion_sort.h
 //
-// Counting sort implementation class header.
+// This implements insertion sort on an array.
 //
 // This file is part of sortbench.
 //
@@ -20,27 +20,28 @@
 // Copyright (C) 2018 Gregory Hedger
 //
 
-#ifndef COUNTING_SORT_H_
-#define COUNTING_SORT_H_
+
+#ifndef INSERTION_SORT_H_
+#define INSERTION_SORT_H_
 
 #include "algo.h"
 
 namespace hedger
 {
-class CountingSort : public Algo
+class InsertionSort : public Algo
 {
  public:
-  CountingSort();
-  virtual ~CountingSort();
+  InsertionSort();
+  ~InsertionSort();
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
-  const char *GetName() { return "Counting Sort"; }
-  void Sort(
-    hedger::S_T *arr,
-    int size,
-    hedger::S_T range_low,
-    hedger::S_T range_hight
-  );
+  const char *GetName() { return "Insertion Sort"; }
+ protected:
+  int Partition(hedger::S_T *arr, int start, int end);
+  void Sort(hedger::S_T *arr, int start, int end);
+  void SortRecurse(hedger::S_T *arr, int start, int end);
+ private:
+  inline void Swap(hedger::S_T *arr, int index_a, int index_b);
 };
 }
 
-#endif // COUNTING_SORT_H_
+#endif // INSERTION_SORT_H_
