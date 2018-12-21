@@ -73,7 +73,7 @@ int QuickSort::Partition(hedger::S_T *arr, int start, int end)
   int partition = start;
 
   for (int i = start; i < end; ++i) {
-    if (arr[i] <= pivot_mag) {
+    if (arr[i] >= pivot_mag) {
       // Need to swap current index value with partition index value
       // to get the greater value to the right of the partition
       // We place the lesser value at the partition index and move
