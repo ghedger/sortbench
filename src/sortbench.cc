@@ -32,6 +32,7 @@
 #include "sortbench_common.h"
 #include "algo.h"
 #include "merge_sort.h"
+#include "merge_sort_multicore.h"
 #include "quick_sort.h"
 #include "counting_sort.h"
 #include "insertion_sort.h"
@@ -250,7 +251,7 @@ void RunTest(std::vector<double>& time_arr,
 int main(int argc, const char **argv)
 {
   using namespace hedger;
-  static const int kAlgoTot = 4;
+  static const int kAlgoTot = 5;
   int result = 0;
 
   std::cout.precision(3);        // sets the precision and fixedness
@@ -259,10 +260,12 @@ int main(int argc, const char **argv)
   Algo *algo_arr[kAlgoTot];
 
   // TODO: Replace with Registry pattern
-  algo_arr[0] = new MergeSort();
-  algo_arr[1] = new QuickSort();
-  algo_arr[2] = new CountingSort();
-  algo_arr[3] = new InsertionSort();
+  int i = 0;
+  algo_arr[i++] = new MergeSort();
+  algo_arr[i++] = new MergeSortMultiCore();
+  algo_arr[i++] = new QuickSort();
+  algo_arr[i++] = new CountingSort();
+  algo_arr[i++] = new InsertionSort();
 
   // Seed random number generator (use seconds since epoch)
   srand((unsigned int) time(NULL));

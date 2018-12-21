@@ -22,15 +22,14 @@ CONFDIR = ~/$(TARGET)
 #Flags, Libraries and Includes
 
 #PROFILING
-#CFLAGS      := -Wall -O0 -pg -ggdb -c -Wmultichar
-
-#LFLAGS      := -pg
+#CFLAGS      := -Wall -O0 -pg -ggdb -c -Wmultichar -pthread
+#LFLAGS      := -pg -pthread
 #DEBUGGING
-#CFLAGS      := -std=c++14 -Wall -O0 -ggdb -c -finstrument-functions -Wmultichar
-
+#CFLAGS      := -std=c++11 -Wall -O0 -ggdb -c -finstrument-functions -Wmultichar -pthread
+#LFLAGS      := -pthread
 #OPTIMIZED
-CFLAGS      := -std=c++14 -Wall -O3 -c -Wmultichar
-
+CFLAGS      := -std=c++11 -Wall -O3 -c -Wmultichar -pthread
+LFLAGS      := -pthread
 LIB 				:=
 INC         := -I$(INCDIR) -I/usr/local/include
 INCDEP      := -I$(INCDIR)
