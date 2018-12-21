@@ -34,8 +34,10 @@ struct MergeSortMultiParams {
   hedger::S_T *arr;
   int start;
   int end;
+  hedger::S_T *work;
 };
 
+#define BLOCKMAX 12
 // MergeSortMultiCore
 // Implementation of high-performance multi-core merge sort
 class MergeSortMultiCore : public Algo
@@ -45,7 +47,7 @@ class MergeSortMultiCore : public Algo
   virtual ~MergeSortMultiCore();
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
   const char *GetName() { return "Merge Sort Multi-Core"; }
-  static void Merge(hedger::S_T *arr, int start, int mid, int end);
+  static void Merge(hedger::S_T *arr, int start, int mid, int end, hedger::S_T *tmp_arr);
   static void *Sort(void *params);
  private:
   static int GetThreadTot() { return thread_tot_; }
@@ -60,9 +62,9 @@ class MergeSortMultiCore : public Algo
 
   static const int kBlockMax;
   static hedger::S_T *pool_;
-  static hedger::S_T **node_stack_;
+  static hedger::S_T *node_stack_[BLOCKMAX];
   static volatile int node_stack_ptr_;
-  static hedger::Lock merge_lock_;
+  static hedger::Lock *merge_lock_;
   static volatile int thread_tot_;
   static const int kThreadMax;
 };
