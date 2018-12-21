@@ -26,16 +26,23 @@
 #include <memory.h>
 #include <malloc.h>
 #include <pthread.h>
+#include <sched.h>
+#include <assert.h>
 
 #include <cstddef>
 
 #include "merge_sort_multicore.h"
-
+#define BLOCKMAX 32
 namespace hedger {
 
 // Static variable definitions
-int MergeSortMultiCore::thread_tot_ = 0;
-const int MergeSortMultiCore::kThreadMax = 4;
+volatile int MergeSortMultiCore::thread_tot_ = 0;
+const int MergeSortMultiCore::kThreadMax = 6;
+volatile int MergeSortMultiCore::node_stack_ptr_;
+hedger::S_T *MergeSortMultiCore::pool_ = nullptr;
+hedger::S_T **MergeSortMultiCore::node_stack_ = nullptr;
+const int MergeSortMultiCore::kBlockMax = 4;
+Lock MergeSortMultiCore::merge_lock_;
 
 // Constructor
 MergeSortMultiCore::MergeSortMultiCore() {
@@ -53,12 +60,7 @@ int MergeSortMultiCore::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
 
-  MergeSortMultiParams params;
-  params.arr =    array;
-  params.start =  0;
-  params.end =    size - 1;
-
-  Sort((void *)&params);
+  SortStart(array, size);
 
   return result;
 }
@@ -66,6 +68,105 @@ int MergeSortMultiCore::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 //
 // Class-specific Implementation
 //
+
+// SortStart
+// Entry point for sort start.
+// Sets up our local pool so we aren't constantly allocating from heap
+// Entry: pointer to array
+//        size of array in elements
+void MergeSortMultiCore::SortStart(hedger::S_T *arr, int size)
+{
+  if( InitAlloc(size) ) {
+    MergeSortMultiParams params;
+    params.arr =    arr;
+    params.start =  0;
+    params.end =    size - 1;
+    Sort((void *)&params);
+
+    ShutdownAlloc();
+  } else {
+    // TODO: Log error
+  }
+}
+
+
+// InitAlloc
+// Allocates memory for sorting temp arrays from heap
+bool MergeSortMultiCore::InitAlloc(int size)
+{
+  bool result = true; // assume success
+  // gets data from pool_
+  pool_ = (hedger::S_T *) malloc(((size + 1 ) * 4) * sizeof(hedger::S_T));
+  if (pool_ ) {
+    if (!InitNodeStack(size + 1)) {
+      ShutdownAlloc();
+      result = false;
+    }
+  } else {
+    result = false;
+  }
+  return result;
+}
+
+// ShutdownAlloc
+// Allocates memory for sorting temp arrays from heap
+void MergeSortMultiCore::ShutdownAlloc()
+{
+  if (pool_) {
+    free (pool_);
+    pool_ = nullptr;
+  }
+  if (node_stack_) {
+    free(node_stack_);
+    node_stack_ = nullptr;
+  }
+}
+
+// InitNodeStack
+// Initializes the block allocation node stack
+bool MergeSortMultiCore::InitNodeStack(int stride)
+{
+  merge_lock_.Acquire();
+  bool result = true; // assume success
+  node_stack_ = (hedger::S_T **) malloc(BLOCKMAX * sizeof(hedger::S_T **));
+  node_stack_ptr_ = 0;
+  if (node_stack_) {
+    // This initilaizes the node stack for blocks
+    for (auto i = 0; i < BLOCKMAX; ++i) {
+      node_stack_[BLOCKMAX - i - 1] = &pool_[i * stride];
+      ++node_stack_ptr_;
+    }
+  } else {
+    result = false;
+  }
+  merge_lock_.Release();
+  return result;
+}
+
+// Pop
+hedger::S_T *MergeSortMultiCore::Pop()
+{
+  hedger::S_T *block;
+  while (0 >= node_stack_ptr_) {   // waits its turn if no blocks available
+    sched_yield();
+  }
+  merge_lock_.Acquire();
+  block = node_stack_[--node_stack_ptr_];
+  printf("-%d:%p ", node_stack_ptr_, node_stack_[node_stack_ptr_]);
+  merge_lock_.Release();
+  return block;
+}
+
+// Push
+void MergeSortMultiCore::Push(hedger::S_T *block)
+{
+  merge_lock_.Acquire();
+  assert(node_stack_ptr_ <= BLOCKMAX);
+  node_stack_[node_stack_ptr_] = block;
+  ++node_stack_ptr_;
+  printf("+%d ", node_stack_ptr_);
+  merge_lock_.Release();
+}
 
 // Merge
 // Merge two subarrays.  Typically called by the mergesort() function.
@@ -85,7 +186,8 @@ void MergeSortMultiCore::Merge(hedger::S_T *arr, int start, int mid, int end)
   // Allocate a temporary array for swapping out and re-ordering words
   // to be copied back to original array.
   // NOTE: alloca is much faster but non-standard and not safe.
-  tmp_arr = (hedger::S_T *) alloca((end - start + 1) * sizeof(hedger::S_T));
+  //tmp_arr = Pop();
+  tmp_arr = (hedger::S_T *) malloc((end - start + 1) * sizeof(hedger::S_T));
   hedger::S_T *next_tmp = tmp_arr;
 
   // Go through and save either left subarray or right subarray into swap array
@@ -107,6 +209,8 @@ void MergeSortMultiCore::Merge(hedger::S_T *arr, int start, int mid, int end)
   // Finally, recover what we've saved, sorted, from the swap array.
   memcpy(&arr[start], tmp_arr, sizeof(hedger::S_T) * (end - start + 1));
   //free(tmp_arr);
+  //Push(tmp_arr);
+  free(tmp_arr);
 }
 
 // Sort

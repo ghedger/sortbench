@@ -24,7 +24,7 @@
 #define MERGE_SORT_MULTICORE_H_
 
 #include "algo.h"
-
+#include "sortbench_lock.h"
 
 namespace hedger
 {
@@ -36,7 +36,8 @@ struct MergeSortMultiParams {
   int end;
 };
 
-
+// MergeSortMultiCore
+// Implementation of high-performance multi-core merge sort
 class MergeSortMultiCore : public Algo
 {
  public:
@@ -46,12 +47,24 @@ class MergeSortMultiCore : public Algo
   const char *GetName() { return "Merge Sort Multi-Core"; }
   static void Merge(hedger::S_T *arr, int start, int mid, int end);
   static void *Sort(void *params);
-  static int thread_tot_;
-  static const int kThreadMax;
  private:
   static int GetThreadTot() { return thread_tot_; }
   static void SetThreadTot(int thread_tot) { thread_tot_ = thread_tot; }
+  static void SortStart(hedger::S_T *arr, int size);
+  // Block stack stuff
+  static bool InitAlloc(int size);
+  static void ShutdownAlloc();
+  static bool InitNodeStack(int stride);
+  static hedger::S_T *Pop();
+  static void Push(hedger::S_T *);
 
+  static const int kBlockMax;
+  static hedger::S_T *pool_;
+  static hedger::S_T **node_stack_;
+  static volatile int node_stack_ptr_;
+  static hedger::Lock merge_lock_;
+  static volatile int thread_tot_;
+  static const int kThreadMax;
 };
 }
 

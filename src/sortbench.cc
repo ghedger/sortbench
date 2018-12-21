@@ -24,7 +24,7 @@
 // C++ headers
 #include <iostream>
 #include <cmath>
-#include <map>
+#include <set>
 #include <vector>
 #include <chrono>
 
@@ -40,7 +40,7 @@
 // This global flag determines whether we print out the array.
 // Used for cursory validation of new sorting algorithms.
 static bool verbose = false;
-
+static bool fast_only = false;  // only include fast algorithms
 // PrintLicense
 void PrintLicense()
 {
@@ -142,7 +142,7 @@ hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range 
 hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
 {
   // In-situ STL map<> for quick lookup of already-used random values
-  std::map<size_t, hedger::S_T> occupancy;
+  std::set<hedger::S_T> occupancy;
 
   size_t index = 0;
   hedger::S_T value = 0;
@@ -153,7 +153,7 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
       value = rand() % size;
       //std::cout << value << std::endl;
     } while (occupancy.find(value) != occupancy.end());
-    occupancy[value] = 1;
+    occupancy.insert(1);
     array[index] = value;
     ++index;
   }
@@ -260,13 +260,6 @@ int main(int argc, const char **argv)
   Algo *algo_arr[kAlgoTot];
 
   // TODO: Replace with Registry pattern
-  int i = 0;
-  algo_arr[i++] = new MergeSort();
-  algo_arr[i++] = new MergeSortMultiCore();
-  algo_arr[i++] = new QuickSort();
-  algo_arr[i++] = new CountingSort();
-  algo_arr[i++] = new InsertionSort();
-
   // Seed random number generator (use seconds since epoch)
   srand((unsigned int) time(NULL));
 
@@ -281,10 +274,31 @@ int main(int argc, const char **argv)
   }
 
   int arg_idx = 1;
-  if (!strcmp(argv[arg_idx], "-v")) {
-    verbose = true;
-    arg_idx++;
+  while ('-' == argv[arg_idx][0])
+  {
+    switch (argv[arg_idx][1]) {
+      case 'v':
+        verbose = true;
+        break;
+      case 'f':
+        fast_only = true;
+        break;
+      default:
+        PrintUsage();
+        return -1;
+    }
+    ++arg_idx;
   }
+
+  int algo_total = 0;
+  algo_arr[algo_total++] = new MergeSort();
+  algo_arr[algo_total++] = new MergeSortMultiCore();
+  algo_arr[algo_total++] = new QuickSort();
+  algo_arr[algo_total++] = new CountingSort();
+  if (!fast_only) {
+    algo_arr[algo_total++] = new InsertionSort();
+  }
+
 
   sscanf(argv[arg_idx++], "%d", (int *) &array_size);
   sscanf(argv[arg_idx], "%d", &iteration_tot);
@@ -302,7 +316,7 @@ int main(int argc, const char **argv)
   if (array) {
     // This runs the sorting tests against a unique data set.
     std::cout << COUT_AQUA << "UNIQUE:" << COUT_NORMAL << std::endl;
-    for (auto i = 0; i < kAlgoTot; ++i) {
+    for (auto i = 0; i < algo_total; ++i) {
       RunTest(
         time_arr[i],
         *algo_arr[i],
@@ -315,7 +329,7 @@ int main(int argc, const char **argv)
     }
     // This runs the sorting tests against data sets containing duplicates.
     std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
-    for (auto i = 0; i < kAlgoTot; ++i) {
+    for (auto i = 0; i < algo_total; ++i) {
       RunTest(
         time_arr[i],
         *algo_arr[i],
@@ -338,7 +352,7 @@ int main(int argc, const char **argv)
     array = nullptr;
   }
 
-  for (auto i = 0; i < kAlgoTot; ++i) {
+  for (auto i = 0; i < algo_total; ++i) {
     delete algo_arr[i];
   }
 
