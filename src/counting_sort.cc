@@ -50,7 +50,7 @@ int CountingSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
 
-  Sort(array,size - 1, 0, range);
+  Sort(array, size, 0, range);
 
   return result;
 }
