@@ -153,7 +153,7 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
       value = rand() % size;
       //std::cout << value << std::endl;
     } while (occupancy.find(value) != occupancy.end());
-    occupancy.insert(1);
+    occupancy.insert(value);
     array[index] = value;
     ++index;
   }
