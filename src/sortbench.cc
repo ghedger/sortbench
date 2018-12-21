@@ -23,12 +23,13 @@
 
 // C++ headers
 #include <iostream>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <chrono>
 
 // Project-specific
-#include "common.h"
+#include "sortbench_common.h"
 #include "algo.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
@@ -197,9 +198,9 @@ void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
 
     // Print report
     std::cout << COUT_YELLOW << name << ":" << COUT_NORMAL << std::endl;
-    std::cout << "TRIES TOT: " << iteration_tot << std::endl;
-    std::cout << "TIME MU: " << mu << " ms" << std::endl;
-    std::cout << "TIME SIGMA: " << sigma << " ms" << std::endl;
+    std::cout << "IT: " << iteration_tot << "\t";
+    std::cout << CHAR_MU << ":" << mu << " ms" << "\t";
+    std::cout << CHAR_SIGMA << ":" << sigma << " ms\t";
     std::cout << "TIME TOTAL: " << time_tot << " ms" << std::endl;
 }
 
@@ -252,6 +253,9 @@ int main(int argc, const char **argv)
   static const int kAlgoTot = 4;
   int result = 0;
 
+  std::cout.precision(3);        // sets the precision and fixedness
+  std::cout.setf(std::ios::fixed);
+
   Algo *algo_arr[kAlgoTot];
 
   // TODO: Replace with Registry pattern
@@ -294,7 +298,7 @@ int main(int argc, const char **argv)
   S_T *array = AllocArray(array_size);
   if (array) {
     // This runs the sorting tests against a unique data set.
-    std::cout << "UNIQUE:" << std::endl;
+    std::cout << COUT_AQUA << "UNIQUE:" << COUT_NORMAL << std::endl;
     for (auto i = 0; i < kAlgoTot; ++i) {
       RunTest(
         time_arr[i],
@@ -307,7 +311,7 @@ int main(int argc, const char **argv)
       ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
     }
     // This runs the sorting tests against data sets containing duplicates.
-    std::cout << "NONUNIQUE:" << std::endl;
+    std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
     for (auto i = 0; i < kAlgoTot; ++i) {
       RunTest(
         time_arr[i],
