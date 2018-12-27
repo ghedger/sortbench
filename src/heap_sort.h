@@ -1,6 +1,6 @@
-// quick_sort.h
+// heap_sort.h
 //
-// This implements a naive quick sort on an array of datatype hedger::S_T.
+// This implements a heap sort on an array of items of type hedger::S_T.
 //
 // This file is part of sortbench.
 //
@@ -20,27 +20,29 @@
 // Copyright (C) 2018 Gregory Hedger
 //
 
-#ifndef QUICK_SORT_H_
-#define QUICK_SORT_H_
+#ifndef HEAP_SORT_H_
+#define HEAP_SORT_H_
 
 #include "algo.h"
 
 namespace hedger
 {
-class QuickSort : public Algo
+class HeapSort : public Algo
 {
  public:
-  QuickSort();
-  ~QuickSort();
+  HeapSort();
+  ~HeapSort();
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
-  const char *GetName() { return "Quick Sort"; }
- protected:
-  int Partition(hedger::S_T *arr, int start, int end);
-  void Sort(hedger::S_T *arr, int start, int end);
-  void SortRecurse(hedger::S_T *arr, int start, int end);
+  const char *GetName() { return "Heap Sort"; }
  private:
+  inline int Parent(int index) { return index >> 1; }
+  inline int Left(int index) { return index << 1; }
+  inline int Right(int index) { return (index << 1) + 1; }
+  void MaxHeapify(hedger::S_T *arr, int size, int index);
+  void BuildMaxHeap(hedger::S_T *arr, int size);
+  void Sort(hedger::S_T *arr, int size);
   inline void Swap(hedger::S_T *arr, int index_a, int index_b);
 };
 }
 
-#endif // QUICK_SORT_H_
+#endif // HEAP_SORT_H_

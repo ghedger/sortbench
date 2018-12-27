@@ -34,6 +34,7 @@ class MergeSort : public Algo
   virtual ~MergeSort();
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
   const char *GetName() { return "Merge Sort"; }
+ private:
   void Merge(hedger::S_T *arr, int start, int mid, int end);
   void Sort(hedger::S_T *arr, int start, int end);
 };

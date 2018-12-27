@@ -28,7 +28,7 @@
 namespace hedger {
 
 QuickSort::QuickSort() {
-};
+}
 
 QuickSort::~QuickSort() {
 }

@@ -30,6 +30,7 @@ CONFDIR = ~/$(TARGET)
 #OPTIMIZED
 CFLAGS      := -std=c++11 -Wall -O3 -c -Wmultichar -pthread
 LFLAGS      := -pthread
+
 LIB 				:=
 INC         := -I$(INCDIR) -I/usr/local/include
 INCDEP      := -I$(INCDIR)

@@ -35,6 +35,7 @@
 #include "merge_sort_multicore.h"
 #include "quick_sort.h"
 #include "counting_sort.h"
+#include "heap_sort.h"
 #include "insertion_sort.h"
 
 // This global flag determines whether we print out the array.
@@ -67,7 +68,10 @@ void PrintUsage()
   cout << "Copyright (C) 2018 Greg Hedger" << endl;
   PrintLicense();
   cout << "Usage:" << endl;
-  cout << "\tsortbench [-v] <array_size> <iteration_total>" << endl;
+  cout << "\tsortbench [-v] [-f] <array_size> <iteration_total>" << endl;
+  cout << "Flags:" << endl;
+  cout << "\t-v - verbose: print full array before and after each sort" << endl;
+  cout << "\t-f - fast: exclude O(n^2) alogrithms" << endl;
 }
 
 // printArray
@@ -88,7 +92,8 @@ void PrintArray(const hedger::S_T *array, size_t n)
       printf("\n");
     }
   }
-  printf("\n");
+  if (column_count < kColumnCount)
+    printf("\n");
 }
 
 // AllocArray
@@ -116,7 +121,8 @@ void FreeArray(hedger::S_T *array)
 }
 
 // createRandomDataSet
-hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range = 0)
+// Fills an array with pseudo-random data, with duplicates
+void CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range = 0)
 {
   size_t index = 0;
   hedger::S_T value = 0;
@@ -129,17 +135,13 @@ hedger::S_T * CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range 
     array[index] = value;
     ++index;
   }
-
-  return array;
 }
 
 // createUniqueDataSet
-//
-// Allocates and fills an array with unique pseudo-random values.
-//
+// Fills an array with unique pseudo-random values.
 // Entry: size
-// Exit:  pointer to array
-hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
+// Exit:  -
+void CreateUniqueDataSet(hedger::S_T *array, size_t size)
 {
   // In-situ STL map<> for quick lookup of already-used random values
   std::set<hedger::S_T> occupancy;
@@ -157,8 +159,6 @@ hedger::S_T * CreateUniqueDataSet(hedger::S_T *array, size_t size)
     array[index] = value;
     ++index;
   }
-
-  return array;
 }
 
 // test
@@ -225,15 +225,10 @@ void RunTest(std::vector<double>& time_arr,
   auto iteration_count = iterations;
   while (iteration_count) {
     --iteration_count;
-      if (unique) // Determines whether to create a data set with or w/o dupes
-        array = CreateUniqueDataSet(array, array_size);
-      else
-        array = CreateRandomDataSet(array, array_size, array_size / 2);
       if (verbose) {
         cout << algorithm.GetName() << " BEFORE:" << endl;
         PrintArray(array, array_size);
       }
-
       auto start = chrono::high_resolution_clock::now(); // mark start time
       Test( algorithm, array, array_size ); // Do work
       auto stop = chrono::high_resolution_clock::now();  // mark end time
@@ -251,10 +246,10 @@ void RunTest(std::vector<double>& time_arr,
 int main(int argc, const char **argv)
 {
   using namespace hedger;
-  static const int kAlgoTot = 5;
+  static const int kAlgoTot = 6;
   int result = 0;
 
-  std::cout.precision(3);        // sets the precision and fixedness
+  std::cout.precision(5);        // sets the precision and fixedness
   std::cout.setf(std::ios::fixed);
 
   Algo *algo_arr[kAlgoTot];
@@ -295,10 +290,16 @@ int main(int argc, const char **argv)
   algo_arr[algo_total++] = new MergeSortMultiCore();
   algo_arr[algo_total++] = new QuickSort();
   algo_arr[algo_total++] = new CountingSort();
+  algo_arr[algo_total++] = new HeapSort();
   if (!fast_only) {
     algo_arr[algo_total++] = new InsertionSort();
   }
 
+
+  if (!argv[arg_idx] || !argv[arg_idx + 1]) {
+    PrintUsage();
+    return -1;
+  }
 
   sscanf(argv[arg_idx++], "%d", (int *) &array_size);
   sscanf(argv[arg_idx], "%d", &iteration_tot);
@@ -313,10 +314,14 @@ int main(int argc, const char **argv)
   std::vector<double> time_arr[kAlgoTot];
   // Allocate our array
   S_T *array = AllocArray(array_size);
+  S_T *master_array = AllocArray(array_size);
   if (array) {
     // This runs the sorting tests against a unique data set.
-    std::cout << COUT_AQUA << "UNIQUE:" << COUT_NORMAL << std::endl;
+    std::cout << COUT_AQUA << "UNIQUE:";
+    CreateUniqueDataSet(master_array, array_size);
+    std::cout << COUT_NORMAL << std::endl;
     for (auto i = 0; i < algo_total; ++i) {
+      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
       RunTest(
         time_arr[i],
         *algo_arr[i],
@@ -329,7 +334,9 @@ int main(int argc, const char **argv)
     }
     // This runs the sorting tests against data sets containing duplicates.
     std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
+    CreateRandomDataSet(master_array, array_size, array_size / 2);
     for (auto i = 0; i < algo_total; ++i) {
+      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
       RunTest(
         time_arr[i],
         *algo_arr[i],
@@ -348,6 +355,7 @@ int main(int argc, const char **argv)
 
   // Clean up
   if (nullptr != array) {
+    delete master_array;
     delete array;
     array = nullptr;
   }
