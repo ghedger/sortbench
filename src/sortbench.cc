@@ -73,6 +73,7 @@ void PrintUsage()
   cout << "Flags:" << endl;
   cout << "\t-v - verbose: print full array before and after each sort" << endl;
   cout << "\t-f - fast: exclude O(n^2) alogrithms" << endl;
+  cout << "\t-s - include already-sorted array for testing" << endl;
 }
 
 // printArray
@@ -121,8 +122,11 @@ void FreeArray(hedger::S_T *array)
   }
 }
 
-// createRandomDataSet
+// CreateRandomDataSet
 // Fills an array with pseudo-random data, with duplicates
+// Entry: array
+//        size in elements
+//        value range (optional)
 void CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range = 0)
 {
   size_t index = 0;
@@ -138,10 +142,25 @@ void CreateRandomDataSet(hedger::S_T *array, size_t size, size_t range = 0)
   }
 }
 
-// createUniqueDataSet
+// CreateSortedDataSet
+// Fills an array with unique ascending-order data
+// Entry: array
+//        size in elements
+void CreateSortedDataSet(hedger::S_T *array, size_t size)
+{
+  size_t index = 0;
+  hedger::S_T value = 0;
+  // Generate array of scrambled unsorted non-unique data in the array
+  while (index < size) {
+    array[index] = value;
+    ++index;
+    ++value;
+  }
+}
+// CreateUniqueDataSet
 // Fills an array with unique pseudo-random values.
-// Entry: size
-// Exit:  -
+// Entry: array
+//        size in elements
 void CreateUniqueDataSet(hedger::S_T *array, size_t size)
 {
   // In-situ STL map<> for quick lookup of already-used random values
@@ -270,6 +289,7 @@ int main(int argc, const char **argv)
   }
 
   int arg_idx = 1;
+  bool include_already_sorted = false;
   while ('-' == argv[arg_idx][0])
   {
     switch (argv[arg_idx][1]) {
@@ -278,6 +298,9 @@ int main(int argc, const char **argv)
         break;
       case 'f':
         fast_only = true;
+        break;
+       case 's':
+        include_already_sorted = true;
         break;
       default:
         PrintUsage();
@@ -335,6 +358,26 @@ int main(int argc, const char **argv)
       );
       ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
     }
+    if (include_already_sorted) {
+      // This runs the sorts on already-sorted data.
+      std::cout << COUT_AQUA << "ALREADY-SORTED:";
+      CreateSortedDataSet(master_array, array_size);
+      std::cout << COUT_NORMAL << std::endl;
+      for (auto i = 0; i < algo_total; ++i) {
+        memcpy(array, master_array, array_size * sizeof(hedger::S_T));
+        RunTest(
+          time_arr[i],
+          *algo_arr[i],
+          array,
+          array_size,
+          iteration_tot,
+          true
+        );
+        ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+      }
+    }
+
+
     // This runs the sorting tests against data sets containing duplicates.
     std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
     CreateRandomDataSet(master_array, array_size, array_size / 2);
