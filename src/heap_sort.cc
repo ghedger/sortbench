@@ -55,35 +55,37 @@ int HeapSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 // Entry: pointer to array
 //        index a
 //        index b
-void HeapSort::Swap(hedger::S_T *arr, int index_a, int index_b)
+void HeapSort::Swap(int index_a, int index_b)
 {
-  hedger::S_T swap = arr[index_a];
-  arr[index_a] = arr[index_b];
-  arr[index_b] = swap;
+  hedger::S_T swap = arr_[index_a];
+  arr_[index_a] = arr_[index_b];
+  arr_[index_b] = swap;
 }
 
 
-void HeapSort::MaxHeapify(hedger::S_T *arr, int size, int index)
+void HeapSort::MaxHeapify(int size, int index)
 {
+  IncMaxRecurseDepth();
   int left = Left(index);
   int right = Right(index);
   hedger::S_T largest;
-  if ((left < size) && (arr[left] > arr[index]))
+  if ((left < size) && (arr_[left] > arr_[index]))
     largest = left;
   else
     largest = index;
-  if ((right < size) && (arr[right] > arr[largest]))
+  if ((right < size) && (arr_[right] > arr_[largest]))
     largest = right;
   if (largest != index) {
-    Swap(arr, index, largest);
-    MaxHeapify(arr, size, largest);
+    Swap(index, largest);
+    MaxHeapify(size, largest);
   }
+  DecMaxRecurseDepth();
 }
 
-void HeapSort::BuildMaxHeap(hedger::S_T *arr, int size)
+void HeapSort::BuildMaxHeap(int size)
 {
   for (auto i = (size >> 1); i >= 0; --i) {
-    MaxHeapify(arr, size, i);
+    MaxHeapify(size, i);
   }
 }
 
@@ -92,16 +94,28 @@ void HeapSort::BuildMaxHeap(hedger::S_T *arr, int size)
 // Entry: pointer to array
 //        start index
 //        end index
-void HeapSort::Sort(hedger::S_T *arr, int size)
+void HeapSort::SortRecurse(int size)
 {
   int heap_size = size;
-  if (size && nullptr != arr) {
-    BuildMaxHeap(arr, size);
+  if (size) {
+    BuildMaxHeap(size);
     for (auto i = size - 1; i >= 1; --i) {
-      Swap(arr, i, 0);
+      Swap(i, 0);
       heap_size -= 1;
-      MaxHeapify(arr, heap_size, 0);
+      MaxHeapify(heap_size, 0);
     }
+  }
+}
+// sort
+// API entry for sort.
+// Entry: pointer to array
+//        start index
+//        end index
+void HeapSort::Sort(hedger::S_T *arr, int size)
+{
+  if (arr && size) {
+    arr_ = arr;
+    SortRecurse(size);
   }
 }
 } // namespace hedger

@@ -50,8 +50,8 @@ class Algo
       max_recurse_depth_hwm_ = max_recurse_depth_;
   }
   virtual void DecMaxRecurseDepth() { --max_recurse_depth_; }
-  int max_recurse_depth_;
-  int max_recurse_depth_hwm_;
+  volatile int max_recurse_depth_;
+  volatile int max_recurse_depth_hwm_;
   hedger::S_T *arr_;
 };
 }

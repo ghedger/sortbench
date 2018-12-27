@@ -85,7 +85,9 @@ void PrintUsage()
 // Exit:  -
 void PrintArray(const hedger::S_T *array, size_t n)
 {
+  using namespace std;
   const int kColumnCount = 16;
+  cout << COUT_DIM;
   int column_count = kColumnCount;
   for (size_t i = 0; i < n; i++) {
     printf("%04x  ", array[i]);
@@ -96,6 +98,8 @@ void PrintArray(const hedger::S_T *array, size_t n)
   }
   if (column_count < kColumnCount)
     printf("\n");
+
+  cout << COUT_NORMAL;
 }
 
 // AllocArray
@@ -226,7 +230,8 @@ void ReportStatistics(
     std::cout << CHAR_MU << ":" << mu << " ms" << "\t";
     std::cout << CHAR_SIGMA << ":" << sigma << " ms\t";
     std::cout << CHAR_UPPER_TAU << ":" << time_tot << " ms\t";
-    std::cout << "MRD: " << algorithm.GetMaxRecurseDepth();
+    if (algorithm.GetMaxRecurseDepth() )
+      std::cout << "MRD: " << algorithm.GetMaxRecurseDepth();
     std::cout <<  std::endl;
 }
 
@@ -251,7 +256,7 @@ void RunTest(std::vector<double>& time_arr,
   while (iteration_count) {
     --iteration_count;
       if (verbose) {
-        cout << algorithm.GetName() << " BEFORE:" << endl;
+        cout << COUT_BROWN << algorithm.GetName() << " BEFORE:" << endl;
         PrintArray(array, array_size);
       }
       auto start = chrono::high_resolution_clock::now(); // mark start time
@@ -261,7 +266,7 @@ void RunTest(std::vector<double>& time_arr,
       double ms_float = ms.count(); // get as a float
       time_arr.push_back(ms_float); // save in our timing array
       if (verbose) {
-        cout << algorithm.GetName() << " AFTER: " << endl;
+        cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
         PrintArray(array, array_size);
       }
   }
@@ -274,7 +279,7 @@ int main(int argc, const char **argv)
   static const int kAlgoTot = 7;
   int result = 0;
 
-  std::cout.precision(5);        // sets the precision and fixedness
+  std::cout.precision(4);        // sets the precision and fixedness
   std::cout.setf(std::ios::fixed);
 
   Algo *algo_arr[kAlgoTot];

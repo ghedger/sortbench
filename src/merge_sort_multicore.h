@@ -28,15 +28,6 @@
 
 namespace hedger
 {
-// MergeSortMultiParams
-// Parameter structure for sorting threads
-struct MergeSortMultiParams {
-  hedger::S_T *arr;
-  int start;
-  int end;
-  hedger::S_T *work;
-};
-
 #define BLOCKMAX 12
 // MergeSortMultiCore
 // Implementation of high-performance multi-core merge sort
@@ -47,27 +38,31 @@ class MergeSortMultiCore : public Algo
   virtual ~MergeSortMultiCore();
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
   const char *GetName() { return "Merge Sort Multi-Core"; }
-  static void Merge(hedger::S_T *arr, int start, int mid, int end, hedger::S_T *tmp_arr);
-  static void *Sort(void *params);
+  void Merge(int start, int mid, int end);
+  static void *SortRecurse(void *params);
  private:
   static int GetThreadTot() { return thread_tot_; }
   static void SetThreadTot(int thread_tot) { thread_tot_ = thread_tot; }
-  static void SortStart(hedger::S_T *arr, int size);
+  void Sort(hedger::S_T *arr, int size);
   // Block stack stuff
   static bool InitAlloc(int size);
   static void ShutdownAlloc();
-  static bool InitNodeStack(int stride);
-  static hedger::S_T *Pop();
-  static void Push(hedger::S_T *);
-
-  static const int kBlockMax;
-  static hedger::S_T *pool_;
-  static hedger::S_T *node_stack_[BLOCKMAX];
-  static volatile int node_stack_ptr_;
+  // Member variables
   static hedger::Lock *merge_lock_;
   static volatile int thread_tot_;
   static const int kThreadMax;
 };
+
+// MergeSortMultiParams
+// Parameter structure for sorting threads
+struct MergeSortMultiParams {
+  hedger::S_T *arr;
+  int start;
+  int end;
+  hedger::MergeSortMultiCore *merge_sort;
+};
+
+
 }
 
 #endif // MERGE_SORT_MULTICORE_H_

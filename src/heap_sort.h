@@ -38,10 +38,11 @@ class HeapSort : public Algo
   inline int Parent(int index) { return index >> 1; }
   inline int Left(int index) { return index << 1; }
   inline int Right(int index) { return (index << 1) + 1; }
-  void MaxHeapify(hedger::S_T *arr, int size, int index);
-  void BuildMaxHeap(hedger::S_T *arr, int size);
+  void MaxHeapify(int size, int index);
+  void BuildMaxHeap(int size);
+  void SortRecurse(int size);
   void Sort(hedger::S_T *arr, int size);
-  inline void Swap(hedger::S_T *arr, int index_a, int index_b);
+  inline void Swap(int index_a, int index_b);
 };
 }
 
