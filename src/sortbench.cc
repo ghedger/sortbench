@@ -317,6 +317,7 @@ int main(int argc, const char **argv)
   S_T *master_array = AllocArray(array_size);
   if (array) {
     // This runs the sorting tests against a unique data set.
+    std::cout << "(Generating unique array)" << std::endl;
     std::cout << COUT_AQUA << "UNIQUE:";
     CreateUniqueDataSet(master_array, array_size);
     std::cout << COUT_NORMAL << std::endl;
