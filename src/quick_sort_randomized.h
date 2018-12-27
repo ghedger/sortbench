@@ -1,4 +1,4 @@
-// quick_sort.h
+// quick_sort_randomized.h
 //
 // This implements a naive quick sort on an array of datatype hedger::S_T.
 //
@@ -20,25 +20,26 @@
 // Copyright (C) 2018 Gregory Hedger
 //
 
-#ifndef QUICK_SORT_H_
-#define QUICK_SORT_H_
+#ifndef QUICK_SORT_RANDOMIZED_H_
+#define QUICK_SORT_RANDOMIZED_H_
 
-#include "algo.h"
+#include "quick_sort.h"
 
 namespace hedger
 {
-class QuickSort : public Algo
+class QuickSortRandomized : public QuickSort
 {
  public:
-  QuickSort();
-  virtual ~QuickSort();
-  virtual int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
-  virtual const char *GetName() { return "Quick Sort"; }
+  QuickSortRandomized();
+  ~QuickSortRandomized();
+  const char *GetName() { return "Quick Sort Randomized"; }
  protected:
-  virtual int Partition(hedger::S_T *arr, int start, int end);
-  virtual void Sort(hedger::S_T *arr, int start, int end);
+  int RandomizedPartition(
+    hedger::S_T *arr,
+    int start,
+    int end
+  );
   virtual void SortRecurse(hedger::S_T *arr, int start, int end);
-  virtual void Swap(hedger::S_T *arr, int index_a, int index_b);
 };
 }
 

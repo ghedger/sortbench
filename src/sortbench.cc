@@ -34,6 +34,7 @@
 #include "merge_sort.h"
 #include "merge_sort_multicore.h"
 #include "quick_sort.h"
+#include "quick_sort_randomized.h"
 #include "counting_sort.h"
 #include "heap_sort.h"
 #include "insertion_sort.h"
@@ -289,6 +290,7 @@ int main(int argc, const char **argv)
   algo_arr[algo_total++] = new MergeSort();
   algo_arr[algo_total++] = new MergeSortMultiCore();
   algo_arr[algo_total++] = new QuickSort();
+  algo_arr[algo_total++] = new QuickSortRandomized();
   algo_arr[algo_total++] = new CountingSort();
   algo_arr[algo_total++] = new HeapSort();
   if (!fast_only) {
