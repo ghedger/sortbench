@@ -34,12 +34,8 @@ class QuickSortRandomized : public QuickSort
   ~QuickSortRandomized();
   const char *GetName() { return "Quick Sort Randomized"; }
  protected:
-  int RandomizedPartition(
-    hedger::S_T *arr,
-    int start,
-    int end
-  );
-  virtual void SortRecurse(hedger::S_T *arr, int start, int end);
+  int RandomizedPartition(int start, int end);
+  virtual void SortRecurse(int start, int end);
 };
 }
 

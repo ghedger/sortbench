@@ -9,5 +9,6 @@
 
 #define CHAR_MU "\u03BC"
 #define CHAR_SIGMA "\u03C3"
+#define CHAR_UPPER_TAU "\u03A4"
 
 #endif // #ifndef _SORTBENCH_COMMON_H_

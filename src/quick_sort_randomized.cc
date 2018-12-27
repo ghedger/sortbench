@@ -41,30 +41,27 @@ QuickSortRandomized::~QuickSortRandomized() {
 //        start index
 //        end index
 // Exit: partition index
-int QuickSortRandomized::RandomizedPartition(
-  hedger::S_T *arr,
-  int start,
-  int end
-)
+int QuickSortRandomized::RandomizedPartition(int start, int end)
 {
     int i = (rand() % (end - start)) + start;
-    Swap(arr, i, end - 1);
-    return Partition(arr, start, end);
+    Swap(i, end - 1);
+    return Partition(start, end);
 }
 
 // SortRecurse
 // Perform the sorting.
 // TODO: Apply R.C. Singleton's optimization (Knuth Vol.3 2nd Ed. p.123) or
 //   a variant thereof to avoid the O(n^2) penalty for an already-sorted array.
-// Entry: pointer to array
-//        start index
+// Entry: start index
 //        end index
-void QuickSortRandomized::SortRecurse(hedger::S_T *arr, int start, int end)
+void QuickSortRandomized::SortRecurse(int start, int end)
 {
+  IncMaxRecurseDepth();
   if (start < end) {
-    int partition = RandomizedPartition(arr, start, end);
-    Sort(arr, start, partition - 1);
-    Sort(arr, partition + 1, end);
+    int partition = RandomizedPartition(start, end);
+    SortRecurse(start, partition - 1);
+    SortRecurse(partition + 1, end);
   }
+  DecMaxRecurseDepth();
 }
 } // namespace hedger

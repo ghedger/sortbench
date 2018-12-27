@@ -194,12 +194,15 @@ int Test(hedger::Algo& o, hedger::S_T *arr, size_t size)
   return result;
 }
 
-// ReportTiming
+// ReportStatistics
 // Calculate and report mean and standard deviation of timing.
 // Entry: vector of times
-//        name of algorithm
-// TODO: Move this to its own utility class
-void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
+//        iteration total
+//        algorithm instance
+void ReportStatistics(
+  std::vector<double>& v,
+  int iteration_tot,
+  hedger::Algo& algorithm)
 {
     // Calculate average (mu)
     double mu, sigma;
@@ -218,11 +221,13 @@ void ReportTiming(std::vector<double>& v, int iteration_tot, const char *name)
     sigma = sqrt(accum / iteration_tot);
 
     // Print report
-    std::cout << COUT_YELLOW << name << ":" << COUT_NORMAL << std::endl;
+    std::cout << COUT_YELLOW << algorithm.GetName() << ":" << COUT_NORMAL << std::endl;
     std::cout << "IT: " << iteration_tot << "\t";
     std::cout << CHAR_MU << ":" << mu << " ms" << "\t";
     std::cout << CHAR_SIGMA << ":" << sigma << " ms\t";
-    std::cout << "TIME TOTAL: " << time_tot << " ms" << std::endl;
+    std::cout << CHAR_UPPER_TAU << ":" << time_tot << " ms\t";
+    std::cout << "MRD: " << algorithm.GetMaxRecurseDepth();
+    std::cout <<  std::endl;
 }
 
 // RunTest
@@ -266,7 +271,7 @@ void RunTest(std::vector<double>& time_arr,
 int main(int argc, const char **argv)
 {
   using namespace hedger;
-  static const int kAlgoTot = 6;
+  static const int kAlgoTot = 7;
   int result = 0;
 
   std::cout.precision(5);        // sets the precision and fixedness
@@ -356,7 +361,10 @@ int main(int argc, const char **argv)
         iteration_tot,
         true
       );
-      ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+      ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
+      for (auto i : algo_arr) {
+        i->ResetMaxRecurseDepth();
+      }
     }
     if (include_already_sorted) {
       // This runs the sorts on already-sorted data.
@@ -373,7 +381,11 @@ int main(int argc, const char **argv)
           iteration_tot,
           true
         );
-        ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+        ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
+        for (auto i : algo_arr) {
+          i->ResetMaxRecurseDepth();
+        }
+
       }
     }
 
@@ -391,7 +403,10 @@ int main(int argc, const char **argv)
         iteration_tot,
         false
       );
-      ReportTiming(time_arr[i], iteration_tot, algo_arr[i]->GetName());
+      ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
+      for (auto i : algo_arr) {
+        i->ResetMaxRecurseDepth();
+      }
     }
   } else {
     // TODO: SEND TO LOGGER

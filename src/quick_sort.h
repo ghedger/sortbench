@@ -35,10 +35,10 @@ class QuickSort : public Algo
   virtual int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
   virtual const char *GetName() { return "Quick Sort"; }
  protected:
-  virtual int Partition(hedger::S_T *arr, int start, int end);
+  virtual int Partition(int start, int end);
   virtual void Sort(hedger::S_T *arr, int start, int end);
-  virtual void SortRecurse(hedger::S_T *arr, int start, int end);
-  virtual void Swap(hedger::S_T *arr, int index_a, int index_b);
+  virtual void SortRecurse(int start, int end);
+  virtual void Swap(int index_a, int index_b);
 };
 }
 

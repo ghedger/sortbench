@@ -48,9 +48,7 @@ MergeSort::~MergeSort() {
 int MergeSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
-
   Sort( array, 0, size - 1 );
-
   return result;
 }
 
@@ -64,8 +62,7 @@ int MergeSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 //        start index
 //        middle index
 //        end index
-// Exit:  -
-void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
+void MergeSort::Merge(int start, int mid, int end)
 {
   hedger::S_T *tmp_arr;     // pointer to temp array
   int left1 = start;        // left of left-half <- start
@@ -82,25 +79,25 @@ void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
   // Go through and save either left subarray or right subarray into swap array
   // according to the least at each index in the respective subarrays.
   while((left1 <= right1) && (left2 <= right2)) {
-    if(arr[left1] < arr[left2])
-      *next_tmp++ = arr[left1++];    // save arr[left1]
+    if(arr_[left1] < arr_[left2])
+      *next_tmp++ = arr_[left1++];    // save arr[left1]
     else
-      *next_tmp++ = arr[left2++];    // save arr[left2]
+      *next_tmp++ = arr_[left2++];    // save arr[left2]
   }
 
   // Now, save off the rest of the data in the swap array
   // from each of the two subarrays
   while(left1 <= right1)
-    *next_tmp++ = arr[left1++];      // save arr[left1]
+    *next_tmp++ = arr_[left1++];      // save arr[left1]
   while(left2 <= right2)
-    *next_tmp++ = arr[left2++];      // save arr[left2]
+    *next_tmp++ = arr_[left2++];      // save arr[left2]
 
   // Finally, recover what we've saved, sorted, from the swap array.
-  memcpy(&arr[start], tmp_arr, sizeof(hedger::S_T) * (end - start + 1));
+  memcpy(&arr_[start], tmp_arr, sizeof(hedger::S_T) * (end - start + 1));
   free(tmp_arr);
 }
 
-// Sort
+// SortRecurse
 //
 // Outer merge sort process: break down into sub arrays, then call
 // the merge function.
@@ -110,8 +107,9 @@ void MergeSort::Merge(hedger::S_T *arr, int start, int mid, int end)
 //        start index (typically 0)
 //        end index (typically end-1)
 // Exit:  -
-void MergeSort::Sort(hedger::S_T *arr, int start, int end)
+void MergeSort::SortRecurse(int start, int end)
 {
+  IncMaxRecurseDepth();
   int mid = 0;
   if(start < end)
   {
@@ -119,14 +117,26 @@ void MergeSort::Sort(hedger::S_T *arr, int start, int end)
     // We're going to break the data set into progressively smaller pieces,
     // merging each as we unwind.
 
-    Sort(arr, start, mid);
-    Sort(arr, mid + 1, end);
+    SortRecurse(start, mid);
+    SortRecurse(mid + 1, end);
 
-    // On the unwind, we merge each of the subarrays, breaking each sub array into
-    // two in the Merge function.  As the Sort function unwinds, the arrays processed
-    // by merge get progressively larger until the final Merge, leaving a perfectly
-    // sorted array.
-    Merge(arr, start, mid, end);
+    // On the unwind, we merge each of the subarrays, breaking each sub array
+    // into two in the Merge function.  As the Sort function unwinds, the arrays
+    // processed by merge get progressively larger until the final Merge,
+    // leaving a perfectly sorted array.
+    Merge(start, mid, end);
+  }
+  DecMaxRecurseDepth();
+}
+// Sort
+// Entry: array
+//        start index
+//        end index
+void MergeSort::Sort(hedger::S_T *arr, int start, int end)
+{
+  if (arr && start < end) {
+    arr_ = arr;
+    SortRecurse(start, end);
   }
 }
 } // namespace hedger

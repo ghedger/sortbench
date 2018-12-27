@@ -55,11 +55,11 @@ int QuickSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 // Entry: pointer to array
 //        index a
 //        index b
-void QuickSort::Swap(hedger::S_T *arr, int index_a, int index_b)
+void QuickSort::Swap(int index_a, int index_b)
 {
-  hedger::S_T swap = arr[index_a];
-  arr[index_a] = arr[index_b];
-  arr[index_b] = swap;
+  hedger::S_T swap = arr_[index_a];
+  arr_[index_a] = arr_[index_b];
+  arr_[index_b] = swap;
 }
 
 // findPartition
@@ -67,18 +67,18 @@ void QuickSort::Swap(hedger::S_T *arr, int index_a, int index_b)
 // Entry: pointer to array
 //        start index
 //        end index
-int QuickSort::Partition(hedger::S_T *arr, int start, int end)
+int QuickSort::Partition(int start, int end)
 {
-  int pivot_mag = arr[end];     // magnitude: lesser, left; greater, right
+  int pivot_mag = arr_[end];     // magnitude: lesser, left; greater, right
   int partition = start;
 
   for (int i = start; i < end; ++i) {
-    if (arr[i] < pivot_mag) {
+    if (arr_[i] < pivot_mag) {
       // Need to swap current index value with partition index value
       // to get the greater value to the right of the partition
       // We place the lesser value at the partition index and move
       // the partition to the right.
-      Swap(arr, i, partition);
+      Swap(i, partition);
       partition++;
     }
   }
@@ -86,7 +86,7 @@ int QuickSort::Partition(hedger::S_T *arr, int start, int end)
   // Swap the last element with the partition.
   // At this point, all the items to the left of the partition will be less
   // than those to the right.
-  Swap(arr, end, partition);
+  Swap(end, partition);
   return partition;
 }
 
@@ -94,16 +94,17 @@ int QuickSort::Partition(hedger::S_T *arr, int start, int end)
 // Perform the sorting.
 // TODO: Apply R.C. Singleton's optimization (Knuth Vol.3 2nd Ed. p.123) or
 //   a variant thereof to avoid the O(n^2) penalty for an already-sorted array.
-// Entry: pointer to array
-//        start index
+// Entry: start index
 //        end index
-void QuickSort::SortRecurse(hedger::S_T *arr, int start, int end)
+void QuickSort::SortRecurse(int start, int end)
 {
+  IncMaxRecurseDepth();
   if (start < end) {
-    int partition = Partition(arr, start, end);
-    Sort(arr, start, partition - 1);
-    Sort(arr, partition + 1, end);
+    int partition = Partition(start, end);
+    SortRecurse(start, partition - 1);
+    SortRecurse(partition + 1, end);
   }
+  DecMaxRecurseDepth();
 }
 
 // sort
@@ -113,7 +114,9 @@ void QuickSort::SortRecurse(hedger::S_T *arr, int start, int end)
 //        end index
 void QuickSort::Sort(hedger::S_T *arr, int start, int end)
 {
-  if ((start < end) && nullptr != arr)
-    SortRecurse(arr, start, end);
+  if ((start < end) && nullptr != arr) {
+    arr_ = arr;
+    SortRecurse(start, end);
+  }
 }
 } // namespace hedger

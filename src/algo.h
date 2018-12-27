@@ -34,10 +34,25 @@ typedef int S_T;
 class Algo
 {
  public:
-  Algo() {};
+  Algo() { max_recurse_depth_ = 0; max_recurse_depth_hwm_ = 0; }
   virtual ~Algo() {};
   virtual int Test(hedger::S_T *t, size_t size, hedger::S_T range = 0) = 0;
   virtual const char *GetName() = 0;
+  int GetMaxRecurseDepth() { return max_recurse_depth_hwm_; }
+  void ResetMaxRecurseDepth() {
+    max_recurse_depth_hwm_ = max_recurse_depth_ = 0;
+  }
+
+ protected:
+  virtual void IncMaxRecurseDepth() {
+    ++max_recurse_depth_;
+    if (max_recurse_depth_hwm_ < max_recurse_depth_)
+      max_recurse_depth_hwm_ = max_recurse_depth_;
+  }
+  virtual void DecMaxRecurseDepth() { --max_recurse_depth_; }
+  int max_recurse_depth_;
+  int max_recurse_depth_hwm_;
+  hedger::S_T *arr_;
 };
 }
 
