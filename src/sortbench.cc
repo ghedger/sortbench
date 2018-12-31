@@ -243,6 +243,7 @@ void ReportStatistics(
 //        # of iterations for which to test
 void RunTest(std::vector<double>& time_arr,
   hedger::Algo& algorithm,
+  const hedger::S_T *master_array,
   hedger::S_T *array,
   const int array_size,
   const int iterations,
@@ -269,6 +270,7 @@ void RunTest(std::vector<double>& time_arr,
         cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
         PrintArray(array, array_size);
       }
+      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
   }
 }
 
@@ -357,10 +359,10 @@ int main(int argc, const char **argv)
     CreateUniqueDataSet(master_array, array_size);
     std::cout << COUT_NORMAL << std::endl;
     for (auto i = 0; i < algo_total; ++i) {
-      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
       RunTest(
         time_arr[i],
         *algo_arr[i],
+        master_array,
         array,
         array_size,
         iteration_tot,
@@ -377,10 +379,10 @@ int main(int argc, const char **argv)
       CreateSortedDataSet(master_array, array_size);
       std::cout << COUT_NORMAL << std::endl;
       for (auto i = 0; i < algo_total; ++i) {
-        memcpy(array, master_array, array_size * sizeof(hedger::S_T));
         RunTest(
           time_arr[i],
           *algo_arr[i],
+          master_array,
           array,
           array_size,
           iteration_tot,
@@ -399,10 +401,10 @@ int main(int argc, const char **argv)
     std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
     CreateRandomDataSet(master_array, array_size, array_size / 2);
     for (auto i = 0; i < algo_total; ++i) {
-      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
       RunTest(
         time_arr[i],
         *algo_arr[i],
+        master_array,
         array,
         array_size,
         iteration_tot,
