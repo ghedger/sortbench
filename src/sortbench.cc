@@ -38,6 +38,7 @@
 #include "counting_sort.h"
 #include "heap_sort.h"
 #include "insertion_sort.h"
+#include "radix_sort.h"
 
 // This global flag determines whether we print out the array.
 // Used for cursory validation of new sorting algorithms.
@@ -255,6 +256,7 @@ void RunTest(std::vector<double>& time_arr,
         chrono::duration<float, chrono::milliseconds::period>;
   auto iteration_count = iterations;
   while (iteration_count) {
+    memcpy(array, master_array, array_size * sizeof(hedger::S_T));
     --iteration_count;
       if (verbose) {
         cout << COUT_BROWN << algorithm.GetName() << " BEFORE:" << endl;
@@ -270,7 +272,6 @@ void RunTest(std::vector<double>& time_arr,
         cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
         PrintArray(array, array_size);
       }
-      memcpy(array, master_array, array_size * sizeof(hedger::S_T));
   }
 }
 
@@ -278,7 +279,7 @@ void RunTest(std::vector<double>& time_arr,
 int main(int argc, const char **argv)
 {
   using namespace hedger;
-  static const int kAlgoTot = 7;
+  static const int kAlgoTot = 8;
   int result = 0;
 
   std::cout.precision(4);        // sets the precision and fixedness
@@ -301,7 +302,7 @@ int main(int argc, const char **argv)
   }
 
   int arg_idx = 1;
-  bool include_already_sorted = false;
+  bool test_already_sorted = false;
   while ('-' == argv[arg_idx][0])
   {
     switch (argv[arg_idx][1]) {
@@ -312,7 +313,7 @@ int main(int argc, const char **argv)
         fast_only = true;
         break;
        case 's':
-        include_already_sorted = true;
+        test_already_sorted = true;
         break;
       default:
         PrintUsage();
@@ -322,16 +323,17 @@ int main(int argc, const char **argv)
   }
 
   int algo_total = 0;
-  algo_arr[algo_total++] = new MergeSort();
-  algo_arr[algo_total++] = new MergeSortMultiCore();
   algo_arr[algo_total++] = new QuickSort();
   algo_arr[algo_total++] = new QuickSortRandomized();
   algo_arr[algo_total++] = new CountingSort();
   algo_arr[algo_total++] = new HeapSort();
+  algo_arr[algo_total++] = new RadixSort();
+  algo_arr[algo_total++] = new MergeSort();
+  algo_arr[algo_total++] = new MergeSortMultiCore();
+
   if (!fast_only) {
     algo_arr[algo_total++] = new InsertionSort();
   }
-
 
   if (!argv[arg_idx] || !argv[arg_idx + 1]) {
     PrintUsage();
@@ -369,11 +371,11 @@ int main(int argc, const char **argv)
         true
       );
       ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-      for (auto i : algo_arr) {
-        i->ResetMaxRecurseDepth();
+      for (auto i = 0; i < algo_total; ++i) {
+        algo_arr[i]->ResetMaxRecurseDepth();
       }
     }
-    if (include_already_sorted) {
+    if (test_already_sorted) {
       // This runs the sorts on already-sorted data.
       std::cout << COUT_AQUA << "ALREADY-SORTED:";
       CreateSortedDataSet(master_array, array_size);
@@ -389,10 +391,9 @@ int main(int argc, const char **argv)
           true
         );
         ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-        for (auto i : algo_arr) {
-          i->ResetMaxRecurseDepth();
+        for (auto i = 0; i < algo_total; ++i) {
+          algo_arr[i]->ResetMaxRecurseDepth();
         }
-
       }
     }
 
@@ -411,8 +412,8 @@ int main(int argc, const char **argv)
         false
       );
       ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-      for (auto i : algo_arr) {
-        i->ResetMaxRecurseDepth();
+      for (auto i = 0; i < algo_total; ++i) {
+        algo_arr[i]->ResetMaxRecurseDepth();
       }
     }
   } else {
