@@ -103,7 +103,7 @@ void RadixSort::Sort(hedger::S_T *arr, int size)
     hedger::S_T m = GetMax(arr, size);
 
     // Do counting sort for every digit. Note that instead
-    // of passing digit number, exp is passed. exp is 10^i
+    // of passing digit number, exp is passed. exp is radix^i
     // where i is current digit number
     for (int exp = 1; m / exp > 0; exp *= 256)
       CountSort(arr, size, exp, 256);
