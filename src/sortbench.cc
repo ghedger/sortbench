@@ -258,20 +258,20 @@ void RunTest(std::vector<double>& time_arr,
   while (iteration_count) {
     memcpy(array, master_array, array_size * sizeof(hedger::S_T));
     --iteration_count;
-      if (verbose) {
-        cout << COUT_BROWN << algorithm.GetName() << " BEFORE:" << endl;
-        PrintArray(array, array_size);
-      }
-      auto start = chrono::high_resolution_clock::now(); // mark start time
-      Test( algorithm, array, array_size ); // Do work
-      auto stop = chrono::high_resolution_clock::now();  // mark end time
-      auto ms = FpMilliseconds(stop - start); // get elapsed time in ms
-      double ms_float = ms.count(); // get as a float
-      time_arr.push_back(ms_float); // save in our timing array
-      if (verbose) {
-        cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
-        PrintArray(array, array_size);
-      }
+    if (verbose) {
+      cout << COUT_BROWN << algorithm.GetName() << " BEFORE:" << endl;
+      PrintArray(array, array_size);
+    }
+    auto start = chrono::high_resolution_clock::now(); // mark start time
+    Test( algorithm, array, array_size ); // Do work
+    auto stop = chrono::high_resolution_clock::now();  // mark end time
+    auto ms = FpMilliseconds(stop - start); // get elapsed time in ms
+    double ms_float = ms.count(); // get as a float
+    time_arr.push_back(ms_float); // save in our timing array
+    if (verbose) {
+      cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
+      PrintArray(array, array_size);
+    }
   }
 }
 
@@ -279,13 +279,13 @@ void RunTest(std::vector<double>& time_arr,
 int main(int argc, const char **argv)
 {
   using namespace hedger;
-  static const int kAlgoTot = 8;
+  std::vector<Algo *> algo_arr;
   int result = 0;
 
   std::cout.precision(4);        // sets the precision and fixedness
   std::cout.setf(std::ios::fixed);
 
-  Algo *algo_arr[kAlgoTot];
+  //Algo *algo_arr[kAlgoTot];
 
   // TODO: Replace with Registry pattern
   // Seed random number generator (use seconds since epoch)
@@ -323,16 +323,16 @@ int main(int argc, const char **argv)
   }
 
   int algo_total = 0;
-  algo_arr[algo_total++] = new QuickSort();
-  algo_arr[algo_total++] = new QuickSortRandomized();
-  algo_arr[algo_total++] = new CountingSort();
-  algo_arr[algo_total++] = new HeapSort();
-  algo_arr[algo_total++] = new RadixSort();
-  algo_arr[algo_total++] = new MergeSort();
-  algo_arr[algo_total++] = new MergeSortMultiCore();
+  algo_arr.push_back(new QuickSort());
+  algo_arr.push_back(new QuickSortRandomized());
+  algo_arr.push_back(new CountingSort());
+  algo_arr.push_back(new HeapSort());
+  algo_arr.push_back(new RadixSort());
+  algo_arr.push_back(new MergeSort());
+  algo_arr.push_back(new MergeSortMultiCore());
 
   if (!fast_only) {
-    algo_arr[algo_total++] = new InsertionSort();
+    algo_arr.push_back(new InsertionSort());
   }
 
   if (!argv[arg_idx] || !argv[arg_idx + 1]) {
@@ -350,7 +350,7 @@ int main(int argc, const char **argv)
   }
 
   // Timing variables for statistical analysis
-  std::vector<double> time_arr[kAlgoTot];
+  std::vector<double> time_arr; //[kAlgoTot];
   // Allocate our array
   S_T *array = AllocArray(array_size);
   S_T *master_array = AllocArray(array_size);
@@ -360,40 +360,38 @@ int main(int argc, const char **argv)
     std::cout << COUT_AQUA << "UNIQUE:";
     CreateUniqueDataSet(master_array, array_size);
     std::cout << COUT_NORMAL << std::endl;
-    for (auto i = 0; i < algo_total; ++i) {
+    for (auto i : algo_arr) {
       RunTest(
-        time_arr[i],
-        *algo_arr[i],
+        time_arr,
+        *i,
         master_array,
         array,
         array_size,
         iteration_tot,
         true
       );
-      ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-      for (auto i = 0; i < algo_total; ++i) {
-        algo_arr[i]->ResetMaxRecurseDepth();
-      }
+      ReportStatistics(time_arr, iteration_tot, *i);
+      i->ResetMaxRecurseDepth();
+      time_arr.clear();
     }
     if (test_already_sorted) {
       // This runs the sorts on already-sorted data.
       std::cout << COUT_AQUA << "ALREADY-SORTED:";
       CreateSortedDataSet(master_array, array_size);
       std::cout << COUT_NORMAL << std::endl;
-      for (auto i = 0; i < algo_total; ++i) {
+      for (auto i : algo_arr) {
         RunTest(
-          time_arr[i],
-          *algo_arr[i],
+          time_arr,
+          *i,
           master_array,
           array,
           array_size,
           iteration_tot,
           true
         );
-        ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-        for (auto i = 0; i < algo_total; ++i) {
-          algo_arr[i]->ResetMaxRecurseDepth();
-        }
+        ReportStatistics(time_arr, iteration_tot, *i);
+        i->ResetMaxRecurseDepth();
+        time_arr.clear();
       }
     }
 
@@ -401,20 +399,19 @@ int main(int argc, const char **argv)
     // This runs the sorting tests against data sets containing duplicates.
     std::cout << COUT_AQUA << "NONUNIQUE:" << COUT_NORMAL << std::endl;
     CreateRandomDataSet(master_array, array_size, array_size / 2);
-    for (auto i = 0; i < algo_total; ++i) {
+    for (auto i : algo_arr) {
       RunTest(
-        time_arr[i],
-        *algo_arr[i],
+        time_arr,
+        *i,
         master_array,
         array,
         array_size,
         iteration_tot,
         false
       );
-      ReportStatistics(time_arr[i], iteration_tot, *algo_arr[i]);
-      for (auto i = 0; i < algo_total; ++i) {
-        algo_arr[i]->ResetMaxRecurseDepth();
-      }
+      ReportStatistics(time_arr, iteration_tot, *i);
+      i->ResetMaxRecurseDepth();
+      time_arr.clear();
     }
   } else {
     // TODO: SEND TO LOGGER
