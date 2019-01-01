@@ -86,6 +86,29 @@ void CountingSort::Sort(
   for (auto i = 0; i < size; ++i) {
     ++count_arr[arr[i] - range_low];
   }
+#if 1
+  // Change count[i] so that count[i] now contains actual
+  //  position of this digit in output[]
+  for (auto i = 1; i < range_hi_adjusted; i++)
+    count_arr[i] += count_arr[i - 1];
+
+  // Write the output
+  int out_index = 0;
+  int count_index = 0;
+  int next_delta_index = -1;
+  hedger::S_T write_value = 0;
+  while (out_index < size) {
+    while (out_index >= next_delta_index) {
+      next_delta_index = count_arr[count_index];
+      write_value = count_index;
+      ++count_index;
+    }
+    arr[out_index] = write_value;
+    ++out_index;
+  }
+#else
+  // ALTERNATIVE IMPLEMENTATION; AVOIDS EXTRA STAIRSTEP TABLE
+  // GENERATION LOOP.
   // Now, we iterate through the count array and write the output.
   // For convenience, we write to the array passed in
   hedger::S_T write_value = range_low;
@@ -107,7 +130,7 @@ void CountingSort::Sort(
       ++out_index;
     }
   }
-
+#endif
   // Clean up and exit
   free(count_arr);
 }
