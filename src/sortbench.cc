@@ -326,11 +326,10 @@ int main(int argc, const char **argv)
   algo_arr.push_back(new QuickSort());
   algo_arr.push_back(new QuickSortRandomized());
   algo_arr.push_back(new CountingSort());
-  algo_arr.push_back(new HeapSort());
   algo_arr.push_back(new RadixSort());
   algo_arr.push_back(new MergeSort());
   algo_arr.push_back(new MergeSortMultiCore());
-
+  algo_arr.push_back(new HeapSort());
   if (!fast_only) {
     algo_arr.push_back(new InsertionSort());
   }

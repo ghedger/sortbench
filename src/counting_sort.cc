@@ -77,8 +77,10 @@ void CountingSort::Sort(
 )
 {
   assert(range_hi > range_low);
+
+  int range_hi_adjusted = range_hi - range_low;
   // This allocates an array of unique element counts and clears it.
-  int *count_arr = (int *) calloc(range_hi - range_low + 1, sizeof(int));
+  int *count_arr = (int *) calloc(range_hi_adjusted + 1, sizeof(int));
   assert(count_arr);
   // Here we count how many of each element and save the counts in count_arr.
   for (auto i = 0; i < size; ++i) {
@@ -88,20 +90,19 @@ void CountingSort::Sort(
   // For convenience, we write to the array passed in
   hedger::S_T write_value = range_low;
   hedger::S_T i;
-  size_t out_index;
-  size_t write_count;
+  int out_index;
+  int write_count;
   i = out_index = 0;
-  while (out_index < (size_t) size) {
-    while (i < range_hi && !count_arr[i]) {
+  while (out_index < size) {  // skips past non-occuring values
+    while (i < range_hi_adjusted && !count_arr[i]) {
       ++i;
     }
-    if (i < range_hi) {
+    if (i < range_hi_adjusted ) { // sets # of repetitions to write
       write_value = i + range_low;
-      write_count = count_arr[i];
+      write_count = count_arr[i] + 1;
       ++i;
     }
-    while (write_count) {
-      --write_count;
+    while (--write_count) { // writes write_count repetitions
       arr[out_index] = write_value;
       ++out_index;
     }

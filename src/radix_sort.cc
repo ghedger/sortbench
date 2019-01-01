@@ -42,7 +42,7 @@ RadixSort::~RadixSort() {
 int RadixSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 {
   int result = 0;
-  Sort(array, size);
+  Sort(array, size, 256);
   return result;
 }
 
@@ -52,25 +52,25 @@ int RadixSort::Test(hedger::S_T *array, size_t size, hedger::S_T range)
 
 // GetMax
 // A utility function to get maximum value in arr[]
-hedger::S_T RadixSort::GetMax(hedger::S_T *arr, int n)
+hedger::S_T RadixSort::GetMax(hedger::S_T *arr, int size)
 {
-  int mx = arr[0];
-  for (int i = 1; i < n; i++)
-    if (arr[i] > mx)
-      mx = arr[i];
-  return mx;
+  int max = arr[0];
+  for (int i = 1; i < size; i++)
+    if (arr[i] > max)
+      max = arr[i];
+  return max;
 }
 
 // CountSort
 // Perform a counting sort on the given data
 // the digit represented by exp.
-void RadixSort::CountSort(int arr[], int n, int exp, int radix)
+void RadixSort::CountSort(int arr[], int size, int exp, int radix)
 {
-  int output[n]; // output array
+  int output[size]; // output array
   int i, count[radix] = {0};
 
   // Store count of occurrences in count[]
-  for (i = 0; i < n; i++)
+  for (i = 0; i < size; i++)
     count[ (arr[i] / exp) % radix ]++;
 
   // Change count[i] so that count[i] now contains actual
@@ -79,15 +79,15 @@ void RadixSort::CountSort(int arr[], int n, int exp, int radix)
     count[i] += count[i - 1];
 
   // Build the output array
-  for (i = n - 1; i >= 0; i--)
+  for (i = size - 1; i >= 0; i--)
   {
-    output[count[ (arr[i]/exp) % radix ] - 1] = arr[i];
+    output[count[ (arr[i] / exp) % radix ] - 1] = arr[i];
     count[ (arr[i] / exp) % radix ]--;
   }
 
   // Copy the output array to arr[], so that arr[] now
   // contains sorted numbers according to current digit
-  for (i = 0; i < n; i++)
+  for (i = 0; i < size; i++)
     arr[i] = output[i];
 }
 
@@ -96,7 +96,7 @@ void RadixSort::CountSort(int arr[], int n, int exp, int radix)
 // Entry: pointer to array
 //        start index
 //        end index
-void RadixSort::Sort(hedger::S_T *arr, int size)
+void RadixSort::Sort(hedger::S_T *arr, int size, int radix)
 {
   if (size && nullptr != arr) {
 
@@ -105,8 +105,8 @@ void RadixSort::Sort(hedger::S_T *arr, int size)
     // Do counting sort for every digit. Note that instead
     // of passing digit number, exp is passed. exp is radix^i
     // where i is current digit number
-    for (int exp = 1; m / exp > 0; exp *= 256)
-      CountSort(arr, size, exp, 256);
+    for (int exp = 1; m / exp > 0; exp *= radix)
+      CountSort(arr, size, exp, radix;
   }
 }
 } // namespace hedger
