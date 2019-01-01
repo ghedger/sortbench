@@ -37,7 +37,7 @@ class RadixSort : public Algo
  protected:
   hedger::S_T GetMax(hedger::S_T *arr, int n);
   void CountSort(int arr[], int n, int exp, int radix);
-  virtual void Sort(hedger::S_T *arr, int start);
+  virtual void Sort(hedger::S_T *arr, int start, int radix);
 };
 }
 

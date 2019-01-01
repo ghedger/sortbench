@@ -106,7 +106,7 @@ void RadixSort::Sort(hedger::S_T *arr, int size, int radix)
     // of passing digit number, exp is passed. exp is radix^i
     // where i is current digit number
     for (int exp = 1; m / exp > 0; exp *= radix)
-      CountSort(arr, size, exp, radix;
+      CountSort(arr, size, exp, radix);
   }
 }
 } // namespace hedger
