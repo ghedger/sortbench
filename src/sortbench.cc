@@ -192,6 +192,23 @@ void CreateUniqueDataSet(hedger::S_T *array, size_t size)
   free(bitset);
 }
 
+// VerifyNonDescending
+// Ensures a set of data is non-descending
+// Entry: array
+//        size in elements
+// Exit: true == nondescending
+bool VerifyNonDescending(hedger::S_T *array, size_t size)
+{
+  bool result = true;   // assume success
+  for (size_t i = 1; i < size; ++i) {
+    if (array[i] < array[i - 1]) {
+      result = false;
+      break;
+    }
+  }
+  return result;
+}
+
 // ReportStatistics
 // Calculate and report mean and standard deviation of timing.
 // Entry: vector of times
@@ -200,7 +217,8 @@ void CreateUniqueDataSet(hedger::S_T *array, size_t size)
 void ReportStatistics(
   std::vector<double>& v,
   int iteration_tot,
-  hedger::Algo& algorithm)
+  hedger::Algo& algorithm,
+  bool passed)
 {
     // Calculate average (mu)
     double mu, sigma;
@@ -219,7 +237,12 @@ void ReportStatistics(
     sigma = sqrt(accum / iteration_tot);
 
     // Print report
-    std::cout << COUT_YELLOW << algorithm.GetName() << ":" << COUT_NORMAL << std::endl;
+
+    std::cout << COUT_YELLOW << algorithm.GetName();
+    if (passed)
+      std::cout << COUT_GREEN << " (PASS)" << COUT_YELLOW << ":" << std::endl;
+    else
+      std::cout << COUT_RED << " (FAIL)" << COUT_YELLOW << ":" <<  std::endl;
     std::cout << "IT: " << iteration_tot << "\t";
     std::cout << CHAR_MU << ":" << mu << " ms" << "\t";
     std::cout << CHAR_SIGMA << ":" << sigma << " ms\t";
@@ -241,7 +264,6 @@ int Test(hedger::Algo& o, hedger::S_T *arr, size_t size)
   int result = o.Test(arr, size, size);
   return result;
 }
-
 
 // RunTest
 // Entry: reference to timing vector
@@ -381,7 +403,12 @@ int main(int argc, const char **argv)
         iteration_tot,
         true
       );
-      ReportStatistics(time_arr, iteration_tot, *i);
+      ReportStatistics(
+        time_arr,
+        iteration_tot,
+        *i,
+        VerifyNonDescending(array, array_size)
+      );
       i->ResetMaxRecurseDepth();
       time_arr.clear();
     }
@@ -400,7 +427,12 @@ int main(int argc, const char **argv)
           iteration_tot,
           true
         );
-        ReportStatistics(time_arr, iteration_tot, *i);
+        ReportStatistics(
+          time_arr,
+          iteration_tot,
+          *i,
+          VerifyNonDescending(array, array_size)
+        );
         i->ResetMaxRecurseDepth();
         time_arr.clear();
       }
@@ -420,7 +452,12 @@ int main(int argc, const char **argv)
         iteration_tot,
         false
       );
-      ReportStatistics(time_arr, iteration_tot, *i);
+      ReportStatistics(
+        time_arr,
+        iteration_tot,
+        *i,
+        VerifyNonDescending(array, array_size)
+      );
       i->ResetMaxRecurseDepth();
       time_arr.clear();
     }
