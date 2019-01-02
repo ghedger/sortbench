@@ -192,19 +192,6 @@ void CreateUniqueDataSet(hedger::S_T *array, size_t size)
   free(bitset);
 }
 
-// test
-//
-// Run the test on the Algo-derived search algorithm object
-//
-// Entry: pointer to algorithm object
-//        pointer to array
-//        size of array
-int Test(hedger::Algo& o, hedger::S_T *arr, size_t size)
-{
-  int result = o.Test(arr, size, size);
-  return result;
-}
-
 // ReportStatistics
 // Calculate and report mean and standard deviation of timing.
 // Entry: vector of times
@@ -241,6 +228,20 @@ void ReportStatistics(
       std::cout << "MRD: " << algorithm.GetMaxRecurseDepth();
     std::cout <<  std::endl;
 }
+
+// Test
+//
+// Run the test on the Algo-derived search algorithm object
+//
+// Entry: pointer to algorithm object
+//        pointer to array
+//        size of array
+int Test(hedger::Algo& o, hedger::S_T *arr, size_t size)
+{
+  int result = o.Test(arr, size, size);
+  return result;
+}
+
 
 // RunTest
 // Entry: reference to timing vector
