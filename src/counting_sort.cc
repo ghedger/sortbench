@@ -81,7 +81,7 @@ void CountingSort::Sort(
   int range_hi_adjusted = range_hi - range_low;
   // This allocates an array of unique element counts and clears it.
   int *count_arr = (int *) calloc(range_hi_adjusted + 1, sizeof(int));
-  if (!count_arr) {
+  if (nullptr == count_arr) {
     // TODO: Log error
     return;
   }
@@ -109,7 +109,7 @@ void CountingSort::Sort(
     arr[out_index] = write_value;
     ++out_index;
   }
- // Clean up and exit
+  // Clean up and exit
   free(count_arr);
 }
 } // namespace hedger
