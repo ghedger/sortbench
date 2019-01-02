@@ -78,9 +78,9 @@ void CountingSort::Sort(
 {
   assert(range_hi > range_low);
 
-  int range_hi_adjusted = range_hi - range_low;
+  int range = range_hi - range_low;
   // This allocates an array of unique element counts and clears it.
-  int *count_arr = (int *) calloc(range_hi_adjusted + 1, sizeof(int));
+  int *count_arr = (int *) calloc(range + 1, sizeof(int));
   if (nullptr == count_arr) {
     // TODO: Log error
     return;
@@ -92,7 +92,7 @@ void CountingSort::Sort(
   }
   // Change count[i] so that count[i] now contains actual
   //  position of this digit in output[]
-  for (auto i = 1; i < range_hi_adjusted; i++)
+  for (auto i = 1; i < range; i++)
     count_arr[i] += count_arr[i - 1];
 
   // Write the output
