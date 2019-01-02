@@ -81,12 +81,15 @@ void CountingSort::Sort(
   int range_hi_adjusted = range_hi - range_low;
   // This allocates an array of unique element counts and clears it.
   int *count_arr = (int *) calloc(range_hi_adjusted + 1, sizeof(int));
+  if (!count_arr) {
+    // TODO: Log error
+    return;
+  }
   assert(count_arr);
   // Here we count how many of each element and save the counts in count_arr.
   for (auto i = 0; i < size; ++i) {
     ++count_arr[arr[i] - range_low];
   }
-#if 1
   // Change count[i] so that count[i] now contains actual
   //  position of this digit in output[]
   for (auto i = 1; i < range_hi_adjusted; i++)
@@ -106,32 +109,7 @@ void CountingSort::Sort(
     arr[out_index] = write_value;
     ++out_index;
   }
-#else
-  // ALTERNATIVE IMPLEMENTATION; AVOIDS EXTRA STAIRSTEP TABLE
-  // GENERATION LOOP.
-  // Now, we iterate through the count array and write the output.
-  // For convenience, we write to the array passed in
-  hedger::S_T write_value = range_low;
-  hedger::S_T i;
-  int out_index;
-  int write_count;
-  i = out_index = 0;
-  while (out_index < size) {  // skips past non-occuring values
-    while (i < range_hi_adjusted && !count_arr[i]) {
-      ++i;
-    }
-    if (i < range_hi_adjusted ) { // sets # of repetitions to write
-      write_value = i + range_low;
-      write_count = count_arr[i] + 1;
-      ++i;
-    }
-    while (--write_count) { // writes write_count repetitions
-      arr[out_index] = write_value;
-      ++out_index;
-    }
-  }
-#endif
-  // Clean up and exit
+ // Clean up and exit
   free(count_arr);
 }
 } // namespace hedger
