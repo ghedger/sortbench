@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <memory.h>
 
 // C++ headers
 #include <iostream>
@@ -44,6 +45,7 @@
 // Used for cursory validation of new sorting algorithms.
 static bool verbose = false;
 static bool fast_only = false;  // only include fast algorithms
+static bool memory_efficient_only = false;  // only include compact algorithms
 // PrintLicense
 void PrintLicense()
 {
@@ -75,6 +77,7 @@ void PrintUsage()
   cout << "\t-v - verbose: print full array before and after each sort" << endl;
   cout << "\t-f - fast: exclude O(n^2) alogrithms" << endl;
   cout << "\t-s - include already-sorted array for testing" << endl;
+  cout << "\t-m - exclude memory-expensive algorithms like counting sort" << endl;
 }
 
 // printArray
@@ -168,22 +171,25 @@ void CreateSortedDataSet(hedger::S_T *array, size_t size)
 //        size in elements
 void CreateUniqueDataSet(hedger::S_T *array, size_t size)
 {
-  // In-situ STL map<> for quick lookup of already-used random values
-  std::set<hedger::S_T> occupancy;
+  // We use our own simple bitset as it is much faster than
+  // std::map or std::unordered_map, which use trees and dynamically
+  // allocate from the free pool.
+  char *bitset = (char *) calloc((size >> 3)+1, sizeof(char));
 
   size_t index = 0;
   hedger::S_T value = 0;
   // Generate array of scrambled unsorted but unique data in the array
   while (index < size) {
     // Get random number; if used, go fish again...
-    do {
-      value = rand() % size;
-      //std::cout << value << std::endl;
-    } while (occupancy.find(value) != occupancy.end());
-    occupancy.insert(value);
-    array[index] = value;
-    ++index;
+    value = rand() % size;
+    // This tells if the value already exists and writes and flags it.
+    if (!(bitset[value >> 3] & (1 << (value & 0x07)))) {
+      bitset[value >> 3] |= (1 << (value & 0x07));
+      array[index] = value;
+      ++index;
+    }
   }
+  free(bitset);
 }
 
 // test
@@ -312,6 +318,9 @@ int main(int argc, const char **argv)
       case 'f':
         fast_only = true;
         break;
+      case 'm':
+        memory_efficient_only = true;
+        break;
        case 's':
         test_already_sorted = true;
         break;
@@ -325,8 +334,10 @@ int main(int argc, const char **argv)
   int algo_total = 0;
   algo_arr.push_back(new QuickSort());
   algo_arr.push_back(new QuickSortRandomized());
-  algo_arr.push_back(new CountingSort());
-  algo_arr.push_back(new RadixSort());
+  if (!memory_efficient_only) {
+    algo_arr.push_back(new CountingSort());
+    algo_arr.push_back(new RadixSort());
+  }
   algo_arr.push_back(new MergeSort());
   algo_arr.push_back(new MergeSortMultiCore());
   algo_arr.push_back(new HeapSort());
