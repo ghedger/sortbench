@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <cstddef>
+#include <malloc.h>
 
 #include "radix_sort.h"
 
@@ -66,8 +67,13 @@ hedger::S_T RadixSort::GetMax(hedger::S_T *arr, int size)
 // the digit represented by exp.
 void RadixSort::CountSort(int arr[], int size, int exp, int radix)
 {
-  int output[size]; // output array
+  int *output = (int *) malloc(size * sizeof(hedger::S_T)); // output array
   int i, count[radix] = {0};
+
+  if (nullptr == output) {
+    // TODO: LOG ERROR
+    return;
+  }
 
   // Store count of occurrences in count[]
   for (i = 0; i < size; i++)
@@ -89,6 +95,7 @@ void RadixSort::CountSort(int arr[], int size, int exp, int radix)
   // contains sorted numbers according to current digit
   for (i = 0; i < size; i++)
     arr[i] = output[i];
+  free(output);
 }
 
 // Sort
@@ -100,13 +107,13 @@ void RadixSort::Sort(hedger::S_T *arr, int size, int radix)
 {
   if (size && nullptr != arr) {
 
-    hedger::S_T m = GetMax(arr, size);
+    hedger::S_T max = GetMax(arr, size);
 
     // Do counting sort for every digit. Note that instead
     // of passing digit number, exp is passed. exp is radix^i
     // where i is current digit number
-    for (int exp = 1; m / exp > 0; exp *= radix)
-      CountSort(arr, size, exp, radix);
+    for (__int64_t exp = 1; max / exp > 0; exp *= radix)
+      CountSort(arr, size, (int) exp, radix);
   }
 }
 } // namespace hedger
