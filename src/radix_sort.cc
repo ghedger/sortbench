@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <cstddef>
 #include <malloc.h>
+#include <memory.h>
 
 #include "radix_sort.h"
 
@@ -87,14 +88,13 @@ void RadixSort::CountSort(int arr[], int size, int exp, int radix)
   // Build the output array
   for (i = size - 1; i >= 0; --i)
   {
-    output[count[ (arr[i] / exp) % radix ] - 1] = arr[i];
-    --count[ (arr[i] / exp) % radix ];
+    output[count[ arr[i] / exp % radix ] - 1] = arr[i];
+    --count[ arr[i] / exp % radix ];
   }
 
   // Copy the output array to arr[], so that arr[] now
   // contains sorted numbers according to current digit
-  for (i = 0; i < size; i++)
-    arr[i] = output[i];
+  memcpy(arr, output, size * sizeof(int));
   free(output);
 }
 
