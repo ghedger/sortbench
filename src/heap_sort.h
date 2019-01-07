@@ -35,9 +35,9 @@ class HeapSort : public Algo
   int Test(hedger::S_T *arr, size_t size, hedger::S_T range = 0);
   const char *GetName() { return "Heap Sort"; }
  private:
-  inline int Parent(int index) { return index >> 1; }
-  inline int Left(int index) { return index << 1; }
-  inline int Right(int index) { return (index << 1) + 1; }
+  inline int Parent(int index);
+  inline int Left(int index);
+  inline int Right(int index);
   void MaxHeapify(int size, int index);
   void BuildMaxHeap(int size);
   void SortRecurse(int size);

@@ -77,7 +77,7 @@ void RadixSort::CountSort(int arr[], int size, int exp, int radix)
 
   // Store count of occurrences in count[]
   for (i = 0; i < size; i++)
-    count[ (arr[i] / exp) % radix ]++;
+    ++count[ (arr[i] / exp) % radix ];
 
   // Change count[i] so that count[i] now contains actual
   //  position of this digit in output[]
@@ -85,10 +85,10 @@ void RadixSort::CountSort(int arr[], int size, int exp, int radix)
     count[i] += count[i - 1];
 
   // Build the output array
-  for (i = size - 1; i >= 0; i--)
+  for (i = size - 1; i >= 0; --i)
   {
     output[count[ (arr[i] / exp) % radix ] - 1] = arr[i];
-    count[ (arr[i] / exp) % radix ]--;
+    --count[ (arr[i] / exp) % radix ];
   }
 
   // Copy the output array to arr[], so that arr[] now

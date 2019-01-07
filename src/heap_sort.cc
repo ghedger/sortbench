@@ -62,7 +62,19 @@ void HeapSort::Swap(int index_a, int index_b)
   arr_[index_b] = swap;
 }
 
+int HeapSort::Parent(int index){
+ return index >> 1;
+}
+int HeapSort::Right(int index) {
+  return (index << 1) + 1;
+}
+int HeapSort::Left(int index) {
+  return index << 1;
+}
 
+// MaxHeapify
+// Entry: size of array
+//        index
 void HeapSort::MaxHeapify(int size, int index)
 {
   IncMaxRecurseDepth();
@@ -82,6 +94,8 @@ void HeapSort::MaxHeapify(int size, int index)
   DecMaxRecurseDepth();
 }
 
+// BuildMaxHeap
+// Entry: size of array
 void HeapSort::BuildMaxHeap(int size)
 {
   for (auto i = (size >> 1); i >= 0; --i) {
@@ -101,7 +115,7 @@ void HeapSort::SortRecurse(int size)
     BuildMaxHeap(size);
     for (auto i = size - 1; i >= 1; --i) {
       Swap(i, 0);
-      heap_size -= 1;
+      --heap_size;
       MaxHeapify(heap_size, 0);
     }
   }
