@@ -30,6 +30,7 @@ Sortbench is a GNU/posix command line test bench for analyzing various sorting a
 # Conclusion
 There are "better" and "worse" algorithms, but no one-size-fits-all for everything -- one reason sorting has occupied such a prominent seat in computer science.  For example, Heap Sort Multicore is a good general-purpose nonstable sort if the list to be sorted is large, whereas of sorting a smaller list many times Heap Sort single-threaded would be preferred on account of the thread creation overhead.  One way to improve this for Heap Sort Multicore would be thread pooling.
 
+By using the -s flag, you can immediately see the Achilles' Heel of the much-venerated quick sort without R.C. Singleton's randomized partition optimation -- an extremely narrow case where the normally fast algorithm drops from O (n log n) to a lethargic n^2 - if the data is already sorted or has only a few items out of order and not by much, the much-maligned Bubble Sort outperforms Quick Sort by several orders of magnitude.
 
 # Future Improvements
 
@@ -38,3 +39,5 @@ It would prove useful to track the memory usage.  For example, Counting Sort is 
 This memory usage accounting must extend to stack space: recursive algorithms are not free; instead, more stack memory is used in lieu of heap memory.  This is not necessarily a bad thing as allocating/de-allocating from the stack requires very few CPU cycles (basically, a subtract on the stack register for the frame size, and subsequent add for de-allocation) compared to heap allocation and de-allocation.
 
 Heap Sort Multicore thread pooling: creating the various threads in advance and have them idle and waiting for work to do rather than creating them in situ at the time needed.
+
+Tim Sort, American Flag Sort, and other hybrid algorithms ought to be added to the suite.
