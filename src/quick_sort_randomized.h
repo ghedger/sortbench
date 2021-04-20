@@ -32,7 +32,7 @@ class QuickSortRandomized : public QuickSort
  public:
   QuickSortRandomized();
   ~QuickSortRandomized();
-  const char *GetName() { return "Quick Sort Randomized"; }
+  const char *GetName() { return "Quick Sort Randomized Partition"; }
  protected:
   int RandomizedPartition(int start, int end);
   virtual void SortRecurse(int start, int end);

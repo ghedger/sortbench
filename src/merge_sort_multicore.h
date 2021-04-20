@@ -50,7 +50,7 @@ class MergeSortMultiCore : public Algo
   // Member variables
   static hedger::Lock *merge_lock_;
   static volatile int thread_tot_;
-  static const int kThreadMax;
+  static int kThreadMax;
 };
 
 // MergeSortMultiParams

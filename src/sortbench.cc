@@ -238,7 +238,7 @@ void ReportStatistics(
 
     // Print report
 
-    std::cout << COUT_YELLOW << algorithm.GetName();
+    std::cout << COUT_WHITE << algorithm.GetName();
     if (passed)
       std::cout << COUT_GREEN << " (PASS)" << COUT_YELLOW << ":" << std::endl;
     else
@@ -288,7 +288,7 @@ void RunTest(std::vector<double>& time_arr,
     memcpy(array, master_array, array_size * sizeof(hedger::S_T));
     --iteration_count;
     if (verbose) {
-      cout << COUT_BROWN << algorithm.GetName() << " BEFORE:" << endl;
+      cout << COUT_WHITE << algorithm.GetName() << " BEFORE:" << endl;
       PrintArray(array, array_size);
     }
     auto start = chrono::high_resolution_clock::now(); // mark start time
@@ -298,7 +298,7 @@ void RunTest(std::vector<double>& time_arr,
     double ms_float = ms.count(); // get as a float
     time_arr.push_back(ms_float); // save in our timing array
     if (verbose) {
-      cout << COUT_BROWN << algorithm.GetName() << " AFTER: " << endl;
+      cout << COUT_WHITE << algorithm.GetName() << " AFTER: " << endl;
       PrintArray(array, array_size);
     }
   }

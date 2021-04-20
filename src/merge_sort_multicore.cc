@@ -30,17 +30,32 @@
 #include <assert.h>
 
 #include <cstddef>
+#include <thread>
 
 #include "merge_sort_multicore.h"
 namespace hedger {
 
 // Static variable definitions
 volatile int MergeSortMultiCore::thread_tot_ = 0;
-const int MergeSortMultiCore::kThreadMax = 6;
+int MergeSortMultiCore::kThreadMax = 8;
 Lock *MergeSortMultiCore::merge_lock_;
 
 // Constructor
 MergeSortMultiCore::MergeSortMultiCore() {
+  // Get and set # of cores
+  MergeSortMultiCore::kThreadMax = std::thread::hardware_concurrency();
+
+  if (!MergeSortMultiCore::kThreadMax) {
+    // If unable to detect, singlethreaded
+    MergeSortMultiCore::kThreadMax = 1;
+  } else {
+    if (MergeSortMultiCore::kThreadMax > 2) {
+      printf("Detected %d cores.\n", MergeSortMultiCore::kThreadMax);
+      MergeSortMultiCore::kThreadMax -= 2;
+    }
+  }
+  printf("Using %d cores.\n", MergeSortMultiCore::kThreadMax);
+
 };
 
 // Destructor

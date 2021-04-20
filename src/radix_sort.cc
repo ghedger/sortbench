@@ -69,16 +69,18 @@ hedger::S_T RadixSort::GetMax(hedger::S_T *arr, int size)
 void RadixSort::CountSort(int arr[], int size, int exp, int radix)
 {
   int *output = (int *) malloc(size * sizeof(hedger::S_T)); // output array
-  int i, count[radix] = {0};
+  int *count = (int *) malloc(radix * sizeof(hedger::S_T));
+  int i;
+  memset(count, 0, radix * sizeof(int));
 
-  if (nullptr == output) {
+  if (nullptr == output || nullptr == count) {
     // TODO: LOG ERROR
     return;
   }
 
   // Store count of occurrences in count[]
   for (i = 0; i < size; i++)
-    ++count[ (arr[i] / exp) % radix ];
+    ++count[ arr[i] / exp % radix ];
 
   // Change count[i] so that count[i] now contains actual
   //  position of this digit in output[]
@@ -112,7 +114,7 @@ void RadixSort::Sort(hedger::S_T *arr, int size, int radix)
     // Do counting sort for every digit. Note that instead
     // of passing digit number, exp is passed. exp is radix^i
     // where i is current digit number
-    for (__int64_t exp = 1; max / exp > 0; exp *= radix)
+    for (long long exp = 1; max / exp > 0; exp *= radix)
       CountSort(arr, size, (int) exp, radix);
   }
 }
