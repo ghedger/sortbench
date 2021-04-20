@@ -1,3 +1,3 @@
 =SortBench=
 
-This is a test bench for analyzing various sorting algorithms.
+This is a GNU/posix command line test bench for analyzing various sorting algorithms.
