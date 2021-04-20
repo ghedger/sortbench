@@ -9,7 +9,7 @@ Sortbench is a GNU/posix command line test bench for analyzing various sorting a
 
 # Params
   * array size
-  * # of full sort iterations
+  * total number of rounds of full sort operations to perform for each algorithm
 
 # Output
 T: 1000	μ:1.6351 ms	σ:0.0708 ms	Τ:1635.1243 ms	MRD: 32
