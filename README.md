@@ -1,15 +1,13 @@
 # Summary
-
 Sortbench is a GNU/posix command line test bench for analyzing various sorting algorithms against integer arrays.  Two flavors are tested: arrays where each value is unique from all other values, and arrays with non-unique duplicated values.  It offers averaging of multiple successive iterations of a given sort algorithm, the ability to filter out known innefficient methods (e.g. bubble sort).  Through this, insight can be gained on the best algorithm to select for a given application with a given set of constraints.  There are "better" and "worse" algorithms, but no one-size-fits-all for everything -- one reason sorting has occupied such a prominent seat in computer science.
 
 # Options
   -v - verbose: print full array before and after each sort (useful for debugging)
-	-f - fast: exclude O(n^2) alogrithms
-	-s - include already-sorted array for testing
-	-m - exclude memory-expensive algorithms like counting sort
+  -f - fast: exclude O(n^2) alogrithms
+  -s - include already-sorted array for testing
+  -m - exclude memory-expensive algorithms like counting sort
 
 # Params
-
   * array size
   * # of full sort iterations
 
@@ -21,8 +19,7 @@ T: 1000	μ:1.6351 ms	σ:0.0708 ms	Τ:1635.1243 ms	MRD: 32
   * Total aggregate time for all iterations (T)
   * Maximum recursion depth (MRD, for recursive algorithms only)
 
-= Algoritms Compared =
-
+# Algorithms
   * Quick Sort
   * Quick Sort w/randomized partition
   * Counting Sort
