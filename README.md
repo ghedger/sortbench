@@ -27,6 +27,6 @@ Sortbench is a GNU/posix command line test bench for analyzing various sorting a
   * Heap Sort
   * Insertion Sort
 
-= Future Improvements =
+# Future Improvements
 
 I would like to track the memory usage.  For example, Counting Sort is the obvious winner in situations where the domain range of the data is known (e.g. integers between 0 and some known upper limit), but has high memory consumption.  This memory usage must account for stack space -- recursive algorithms are not free; instead more stack memory is used in lieu of heap memory.
